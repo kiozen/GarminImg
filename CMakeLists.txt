@@ -1,0 +1,39 @@
+cmake_minimum_required(VERSION 3.0.0)
+
+PROJECT(Garmin)
+
+set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
+set(LIBRARY_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
+
+# where to look first for cmake modules, before ${CMAKE_ROOT}/Modules/ is checked
+set(CMAKE_MODULE_PATH
+  ${CMAKE_SOURCE_DIR}/cmake/Modules
+)
+
+# add definitions
+include(DefineCMakeDefaults)
+include(DefineCompilerFlags)
+include(DefineInstallationPaths)
+include(DefineOptions.cmake)
+include(CPackConfig.cmake)
+include(ConfigureChecks.cmake)
+configure_file(config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config.h)
+
+find_package(PROJ4      REQUIRED)
+find_package(GDAL       REQUIRED)
+find_package(Qt5Core    REQUIRED)
+find_package(Qt5Widgets REQUIRED)
+find_package(Qt5Gui     REQUIRED)
+
+add_definitions(-DACCEPT_USE_OF_DEPRECATED_PROJ_API_H)
+
+SUBDIRS(./srcDecodeImg)
+SUBDIRS(./srcEncodeImg)
+
+CONFIGURE_FILE(
+  "${CMAKE_CURRENT_SOURCE_DIR}/cmake_uninstall.cmake.in"
+  "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake"
+  IMMEDIATE @ONLY)
+
+ADD_CUSTOM_TARGET(uninstall
+  "${CMAKE_COMMAND}" -P "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake")
