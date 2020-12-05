@@ -1,5 +1,5 @@
 /**********************************************************************************************
-    Copyright (C) 2006, 2007 Oliver Eichler oliver.eichler@gmx.de
+    Copyright (C) 2020 Oliver Eichler oliver.eichler@gmx.de
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -351,6 +351,7 @@ quint32 CGarminPolygon::decode2(qint32 iCenterLon, qint32 iCenterLat, quint32 sh
 #endif
     u << xy.u;
     v << xy.v;
+    points << QPointF(xy.u * RAD_TO_DEG, xy.v * RAD_TO_DEG);
 
     // next points
     while(sr.get(x, y))
@@ -377,6 +378,7 @@ quint32 CGarminPolygon::decode2(qint32 iCenterLon, qint32 iCenterLat, quint32 sh
 #endif
         u << xy.u;
         v << xy.v;
+        points << QPointF(xy.u * RAD_TO_DEG, xy.v * RAD_TO_DEG);
     }
 
     if(hasV2Label)

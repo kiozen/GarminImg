@@ -1,4 +1,5 @@
 
+#include "CException.h"
 #include "CGarminRaster.h"
 #include "Garmin.h"
 
@@ -13,10 +14,15 @@ CGarminRaster::~CGarminRaster()
 quint32 CGarminRaster::decode(const quint8 * pData, const quint8 * pEnd)
 {
     quint8 type = *pData++;
+
+    if(type != 0xE0)
+    {
+        throw CException("Not a CGarminRaster type.");
+    }
+
     quint8 byte = *pData++;
     quint32 len = getBlockLength(byte);
     qint32 tmp32;
-
 
     index = *pData++;
     if(len == 22)

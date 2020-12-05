@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.0.0)
 
-PROJECT(Garmin)
+PROJECT(Garmin VERSION 1.0.0)
 
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
 set(LIBRARY_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
@@ -26,6 +26,18 @@ find_package(Qt5Widgets REQUIRED)
 find_package(Qt5Gui     REQUIRED)
 
 add_definitions(-DACCEPT_USE_OF_DEPRECATED_PROJ_API_H)
+
+
+if(UNIX)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++1z -lstdc++ -lm")
+endif(UNIX)
+
+if (APPLE)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS_INIT} -Wall -std=c++17 -stdlib=libc++")
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -stdlib=libc++")
+    SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -framework Foundation -framework DiskArbitration")
+    SET(LINK_FLAGS "${LINK_FLAGS} -framework Foundation -framework DiskArbitration")
+endif(APPLE)
 
 SUBDIRS(./srcDecodeImg)
 SUBDIRS(./srcEncodeImg)

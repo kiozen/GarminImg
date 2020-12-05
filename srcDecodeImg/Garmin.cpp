@@ -1,5 +1,5 @@
 /**********************************************************************************************
-    Copyright (C) 2013 Oliver Eichler oliver.eichler@gmx.de
+    Copyright (C) 2020 Oliver Eichler oliver.eichler@gmx.de
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -71,7 +71,7 @@ void printUInt16(const char * label, quint16 val)
 
 void printUInt24(const char * label, quint24 val)
 {
-    quint32 tmp = val[0] | val[1] << 8 | val[2] << 16;
+    qint32 tmp = val[0] | val[1] << 8 | val[2] << 16;
     printf("% 30s %f (0x%06X, %i)\n", label, GARMIN_DEG(tmp), tmp, tmp);
 }
 
@@ -89,27 +89,48 @@ void printUInt32(const char * label, quint32 val)
 void gmapsupp_imghdr_t::print()
 {
     printUInt8("xorByte", xorByte);
-    printArrayUInt8("byte0x00000001_0x00000009", byte0x00000001_0x00000009, sizeof(byte0x00000001_0x00000009));
+    printArrayUInt8("byte0x00000001_0x00000007", byte0x00000001_0x00000007, sizeof(byte0x00000001_0x00000007));
+    printUInt16("version", version);
     printInt8("upMonth", upMonth);
     printInt16("upYear", upYear + 1900);
-    printArrayUInt8("byte0x0000000C_0x0000000F", byte0x0000000C_0x0000000F, sizeof(byte0x0000000C_0x0000000F));
+    printArrayUInt8("byte0x0000000C_0x0000000D", byte0x0000000C_0x0000000D, sizeof(byte0x0000000C_0x0000000D));
+    printUInt8("supp", supp);
+    printUInt8("checksum", checksum);
     printArrayInt8("signature", signature, sizeof(signature));
-    printArrayUInt8("byte0x00000017_0x00000040", byte0x00000017_0x00000040, sizeof(byte0x00000017_0x00000040));
+    printUInt8("byte0x00000017", byte0x00000017);
+    printUInt16("sectors1", sectors1);
+    printUInt16("heads1", heads1);
+    printUInt16("cylinders", cylinders);
+    printArrayUInt8("byte0x0000001E_0x000000038", byte0x0000001E_0x000000038, sizeof(byte0x0000001E_0x000000038));
+    printInt16("year", year);
+    printInt8("month", month);
+    printInt8("day", day);
+    printInt8("hour", hour);
+    printInt8("minute", minute);
+    printInt8("second", second);
+    printInt8("offsetFAT", offsetFAT);
     printArrayInt8("identifier", identifier, sizeof(identifier));
     printUInt8("byte0x00000048", byte0x00000048);
     printArrayInt8("desc1", desc1, sizeof(desc1));
-    printArrayUInt8("byte0x0000005D_0x00000060", byte0x0000005D_0x00000060, sizeof(byte0x0000005D_0x00000060));
+    printUInt16("head2", head2);
+    printUInt16("sectors2", sectors2);
     printUInt8("e1", e1);
     printUInt8("e2", e2);
     printUInt16("nBlocks1", nBlocks1);
     printArrayInt8("desc2", desc2, sizeof(desc2));
-    printArrayUInt8("byte0x00000084_0x000001C9", byte0x00000084_0x000001C9, sizeof(byte0x00000084_0x000001C9));
-    printUInt16("nBlocks2", nBlocks2);
-    printArrayUInt8("byte0x0000001CC_0x000001FD", byte0x0000001CC_0x000001FD, sizeof(byte0x0000001CC_0x000001FD));
+    printArrayUInt8("byte0x00000083_0x000001BE", byte0x00000083_0x000001BE, sizeof(byte0x00000083_0x000001BE));
+    printUInt8("startHead", startHead);
+    printUInt8("startSector", startSector);
+    printUInt8("startCylinder", startCylinder);
+    printUInt8("systemType", systemType);
+    printUInt8("endHead", endHead);
+    printUInt8("endSector", endSector);
+    printUInt8("endCylinder", endCylinder);
+    printUInt32("relSectors", relSectors);
+    printUInt32("nSectors", nSectors);
+    printArrayUInt8("byte0x0000001CE_0x000001FD", byte0x0000001CE_0x000001FD, sizeof(byte0x0000001CE_0x000001FD));
     printUInt16("terminator", terminator);
-    printArrayUInt8("byte0x00000200_0x0000040B", byte0x00000200_0x0000040B, sizeof(byte0x00000200_0x0000040B));
-    printUInt32("dataoffset", dataoffset);
-    printArrayUInt8("byte0x00000410_0x00000FFF", byte0x00000410_0x00000FFF, sizeof(byte0x00000410_0x00000FFF));
+    // printArrayUInt8("byte0x00000200_0x00000FFF", byte0x00000200_0x00000FFF, sizeof(byte0x00000200_0x00000FFF));
 }
 
 void subfile_hdr_t::print()
@@ -158,7 +179,8 @@ void hdr_tre_t::print(quint32 offset)
     printUInt16("tre3_rec_size", tre3_rec_size);
     printArrayUInt8("byte0x0000003B_0x0000003E", byte0x0000003B_0x0000003E, sizeof(byte0x0000003B_0x0000003E));
     printUInt8("POI_flags", POI_flags);
-    printArrayUInt8("byte0x00000040_0x00000049", byte0x00000040_0x00000049, sizeof(byte0x00000040_0x00000049));
+    printArrayUInt8("render_prio", render_prio, sizeof(render_prio));
+    printArrayUInt8("byte0x00000043_0x00000049", byte0x00000043_0x00000049, sizeof(byte0x00000043_0x00000049));
     printUInt32("tre4_offset", tre4_offset + offset);
     printUInt32("tre4_size", tre4_size);
     printUInt16("tre4_rec_size", tre4_rec_size);
@@ -171,7 +193,8 @@ void hdr_tre_t::print(quint32 offset)
     printUInt32("tre6_size", tre6_size);
     printUInt16("tre6_rec_size", tre6_rec_size);
     printArrayUInt8("byte0x00000070_0x00000073", byte0x00000070_0x00000073, sizeof(byte0x00000070_0x00000073));
-    printArrayUInt8("byte0x00000074_0x0000007B", byte0x00000074_0x0000007B, sizeof(byte0x00000074_0x0000007B));
+    printUInt32("map_id", map_id);
+    printArrayUInt8("byte0x00000078_0x0000007B", byte0x00000078_0x0000007B, sizeof(byte0x00000078_0x0000007B));
     printUInt32("tre7_offset", tre7_offset + offset);
     printUInt32("tre7_size", tre7_size);
     printUInt16("tre7_rec_size", tre7_rec_size);
@@ -187,7 +210,12 @@ void hdr_tre_t::print(quint32 offset)
     printUInt32("tre9_offset", tre9_offset + offset);
     printUInt32("tre9_size", tre9_size);
     printUInt16("tre9_rec_size", tre9_rec_size);
-    printArrayUInt8("byte0x000000B8_0x00000D2", byte0x000000B8_0x00000D2, sizeof(byte0x000000B8_0x00000D2));
+    printArrayUInt8("byte0x000000B8_0x000000BB", byte0x000000B8_0x000000BB, sizeof(byte0x000000B8_0x000000BB));
+    printUInt32("tre10_offset", tre9_offset + offset);
+    printUInt32("tre10_size", tre9_size);
+    printUInt16("tre10_rec_size", tre9_rec_size);
+    printArrayUInt8("byte0x000000C6_0x000000CE", byte0x000000C6_0x000000CE, sizeof(byte0x000000C6_0x000000CE));
+    printUInt32("map_number", map_number);
 }
 
 void hdr_rgn_t::print(quint32 offset)
@@ -415,7 +443,7 @@ void hdr_dem_t::print(quint32 offset)
     printArrayUInt8("byte0x00000025_0x00000029", byte0x00000025_0x00000029, sizeof(byte0x00000025_0x00000029));
 }
 
-void subdiv_t::print()
+void subdiv_t::print() const
 {
     if(next)
     {
@@ -432,10 +460,13 @@ void subdiv_t::print()
     printf("offsetPolygons2:  %08X  lengthPolygons2:  %08X\n", offsetPolygons2, lengthPolygons2);
     printf("offsetPolylines2: %08X  lengthPolylines2: %08X\n", offsetPolylines2, lengthPolylines2);
     printf("offsetPoints2:    %08X  lengthPoints2:    %08X\n", offsetPoints2, lengthPoints2);
+    printf("iCenterLng %f iCenterLat %f\n", GARMIN_DEG(iCenterLng), GARMIN_DEG(iCenterLat));
 }
 
 
 void tile_t::print() const
 {
-    printf("%08X % 3i % 3i  %f %f %f %f  %i %i %i %i\n", offset, w, h, lon1, lat1, lon2, lat2, int(u1), int(v1), int(u2), int(v2));
+    printf("%08X % 3i % 3i  %f %f %f %f\n", offset, img.width(), img.height(), lon1, lat1, lon2, lat2);
 }
+
+

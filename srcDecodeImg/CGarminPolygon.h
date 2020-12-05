@@ -1,5 +1,5 @@
 /**********************************************************************************************
-    Copyright (C) 2006, 2007 Oliver Eichler oliver.eichler@gmx.de
+    Copyright (C) 2020 Oliver Eichler oliver.eichler@gmx.de
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -23,14 +23,14 @@
    Konstantin Galichsky (kg@geopainting.com), http://www.geopainting.com
 
 **********************************************************************************************/
-#ifndef CGARMINPOLYGON_H
-#define CGARMINPOLYGON_H
+#pragma once
 
 #include <proj_api.h>
 #ifdef __MINGW32__
 #undef LP
 #endif
 #include <QtCore>
+#include <QPolygonF>
 
 struct subdiv_desc_t;
 struct sign_info_t;
@@ -60,6 +60,8 @@ public:
     /// the actual polyline points as longitude / latitude [rad]
     QVector<double> u;
     QVector<double> v;
+
+    QPolygonF points;
 
     quint32 id;
 
@@ -113,4 +115,4 @@ private:
 
     bool extraBit;
 };
-#endif                           //CGARMINPOLYGON_H
+
