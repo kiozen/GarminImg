@@ -1,9 +1,9 @@
 /**********************************************************************************************
-    Copyright (C) 2013 Oliver Eichler oliver.eichler@gmx.de
+    Copyright (C) 2020 Oliver Eichler <oliver.eichler@gmx.de>
 
-    This program is free software; you can redistribute it and/or modify
+    This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
+    the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
     This program is distributed in the hope that it will be useful,
@@ -12,21 +12,20 @@
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 **********************************************************************************************/
-#ifndef CSUBMAP_H
-#define CSUBMAP_H
+#pragma once
 
-#include <QObject>
+#include "sections/ISection.h"
 
-class CSubMap : public QObject
+class CSection : public ISection
 {
 public:
-    CSubMap(QObject * parent);
-    virtual ~CSubMap();
+    CSection(quint16 recSize = 0);
+    virtual ~CSection() = default;
+
+    void write(QFile& file) override;
 };
 
-#endif //CSUBMAP_H
 

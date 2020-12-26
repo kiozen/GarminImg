@@ -1,9 +1,9 @@
 /**********************************************************************************************
-    Copyright (C) 2013 Oliver Eichler oliver.eichler@gmx.de
+    Copyright (C) 2020 Oliver Eichler <oliver.eichler@gmx.de>
 
-    This program is free software; you can redistribute it and/or modify
+    This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
+    the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
     This program is distributed in the hope that it will be useful,
@@ -12,89 +12,84 @@
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 **********************************************************************************************/
 
-#include "argv.h"
-#include "CEncoder.h"
-#include "CMap.h"
-
+#include "CException.h"
+#include "CGarminEncoder.h"
+#include "version.h"
 #include <gdal_priv.h>
-#include <stdlib.h>
+#include <iostream>
+#include <QtCore>
+
+QCommandLineParser allArgs;
 
 int main(int argc, char ** argv)
 {
-    CMap map;
-    CEncoder encoder("test.img");
+    QCoreApplication app(argc, argv);
+    QCoreApplication::setApplicationName(_MKSTR(APPLICATION_NAME));
+    QCoreApplication::setApplicationVersion(VER_STR);
 
-    int quality         = -1;
-    int subsampling     = -1;
+    allArgs.setApplicationDescription(""
+                                      "------------------ " WHAT_STR " ------------------\n"
+                                      "Encode a raster map into a Garmin IMG file.\n"
+                                      "");
+    QCommandLineOption helpOption = allArgs.addHelpOption();
+    QCommandLineOption verOption = allArgs.addVersionOption();
 
-    const char *copyright = "There should be a copy right";
-    const char *mapname   = "QLandkarte Test Map first try to create ratser map in gmapsupp";
 
-    char * pCopyright   = 0;
-    char * pMapname     = 0;
+    allArgs.addOptions({
+        {
+            "j", "Number of threads to use. Default MAX_CORE", "numThreads", "-1"
+        },
+        {
+            "tmpdir", "Temporary working path for intermediate files: Default: " + QDir::tempPath(), "path", QDir::tempPath()
+        },
+        {
+            "keep", "Keep temporary data in " + QDir::tempPath()
+        },
+    });
 
-    int skip_next_arg = 0;
+    allArgs.addPositionalArgument("path-to-file", "A raster map file to encode.");
 
+    if (!allArgs.parse(app.arguments()))
+    {
+        std::cerr << allArgs.errorText().toUtf8().constData();
+        std::cerr << allArgs.helpText().toUtf8().constData();
+        exit(-1);
+    }
+
+    if (allArgs.isSet(helpOption) || allArgs.isSet(verOption))
+    {
+        std::cout << allArgs.helpText().toUtf8().constData();
+        exit(0);
+    }
+
+    QStringList sourcefiles = allArgs.positionalArguments();
+
+    if(sourcefiles.count() != 1)
+    {
+        std::cout << allArgs.helpText().toUtf8().constData();
+        exit(-1);
+    }
+
+    int result = 0;
     GDALAllRegister();
-
-    for(int i = 1; i < (argc - 1); i++)
+    try
     {
-        if (skip_next_arg)
-        {
-            skip_next_arg = 0;
-            continue;
-        }
-
-        if (argv[i][0] == '-')
-        {
-            if (towupper(argv[i][1]) == 'Q')
-            {
-                quality = atol(argv[i + 1]);
-                skip_next_arg = 1;
-                continue;
-            }
-            else if (towupper(argv[i][1]) == 'S')
-            {
-                subsampling = atol(argv[i + 1]);
-                skip_next_arg = 1;
-                continue;
-            }
-            else if (towupper(argv[i][1]) == 'C')
-            {
-                copyright = pCopyright = get_argv(i + 1, argv);
-                skip_next_arg = 1;
-                continue;
-            }
-            else if (towupper(argv[i][1]) == 'N')
-            {
-                mapname = pMapname = get_argv(i + 1, argv);
-                skip_next_arg = 1;
-                continue;
-            }
-        }
-
-        map.addMapSource(argv[i]);
+        CGarminEncoder encoder(sourcefiles[0]);
+        encoder.splitIntoTiles();
+        encoder.createImage("test.img", "Taufers test map");
+    }
+    catch(const CException& e)
+    {
+        std::cerr << QString(e).toUtf8().constData();
+        result = -1;
     }
 
-    map.setName(mapname);
-    map.split();
-
-    encoder.start(map);
-
+    printf("\n\n\n");
     GDALDestroyDriverManager();
-    if(pCopyright)
-    {
-        free(pCopyright);
-    }
-    if(pMapname)
-    {
-        free(pMapname);
-    }
-
-    return 0;
+    return result;
 }
+
