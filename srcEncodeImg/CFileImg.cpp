@@ -16,46 +16,41 @@
 
 **********************************************************************************************/
 
-#include "CException.h"
 #include "CFileImg.h"
 
-CFileImg::CFileImg()
-{
-    CFatBlock::setBlocksize(hdr.blocksize());
-    blocks << CFatBlock();
+#include "CException.h"
+
+CFileImg::CFileImg() {
+  CFatBlock::setBlocksize(hdr.blocksize());
+  blocks << CFatBlock();
 }
 
-CFileImg& CFileImg::operator<<(const QFileInfo& info)
-{
-    blocks << CFatBlock(info);
+CFileImg& CFileImg::operator<<(const QFileInfo& info) {
+  blocks << CFatBlock(info);
+  return *this;
 }
 
-void CFileImg::finalize()
-{
-    CFatBlock& first = blocks.first();
-    first.data_.size = blocks.size() * first.size() + hdr.offsetFAT();
+void CFileImg::finalize() {
+  CFatBlock& first = blocks.first();
+  first.data_.size = blocks.size() * first.size() + hdr.offsetFAT();
 
-    for(CFatBlock& block : blocks)
-    {
-        block.enumerate();
-    }
+  for (CFatBlock& block : blocks) {
+    block.enumerate();
+  }
 
-    hdr.setBlockcount(CFatBlock::blockcount());
+  hdr.setBlockcount(CFatBlock::blockcount());
 }
 
-void CFileImg::write(QFile& file)
-{
-    file.resize(CFatBlock::blockcount() * hdr.blocksize());
-    file.seek(0);
-    hdr.write(file);
+void CFileImg::write(QFile& file) {
+  file.resize(CFatBlock::blockcount() * hdr.blocksize());
+  file.seek(0);
+  hdr.write(file);
 
-    for(CFatBlock& block : blocks)
-    {
-        block.writeBlock(file);
-    }
+  for (CFatBlock& block : blocks) {
+    block.writeBlock(file);
+  }
 
-    for(CFatBlock& block : blocks)
-    {
-        block.writeData(file);
-    }
+  for (CFatBlock& block : blocks) {
+    block.writeData(file);
+  }
 }

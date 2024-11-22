@@ -97,10 +97,7 @@ qt5_add_resources(RC_SRCS ${RCS})
 
 include_directories(
     SYSTEM # this prevents warnings from non-QMS headers
-    ${CMAKE_BINARY_DIR}
-    ${CMAKE_SOURCE_DIR}/include
-    ${PROJ4_INCLUDE_DIRS}
-    ${GDAL_INCLUDE_DIRS}
+    ../srcCommon
 )
 
 if(MSVC)
@@ -116,10 +113,11 @@ add_executable( ${APPLICATION_NAME}
 )
 
 target_link_libraries( ${APPLICATION_NAME}
+    common
     Qt5::Core
     Qt5::Gui
-    ${GDAL_LIBRARIES}
-    ${PROJ4_LIBRARIES}
+    GDAL::GDAL
+    PROJ::proj
 )
 
 target_compile_definitions(${APPLICATION_NAME} PUBLIC

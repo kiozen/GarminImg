@@ -18,41 +18,30 @@
 
 #include "sections/CTre1.h"
 
+CTre1::CTre1() {}
 
-CTre1::CTre1()
-{
-}
-
-
-CMapLevel& CTre1::maplevel(quint8 zoom)
-{
-    for(CMapLevel& maplevel : maplevels_)
-    {
-        if(maplevel.zoom() == zoom)
-        {
-            return maplevel;
-        }
+CMapLevel& CTre1::maplevel(quint8 zoom) {
+  for (CMapLevel& maplevel : maplevels_) {
+    if (maplevel.zoom() == zoom) {
+      return maplevel;
     }
+  }
 
-    maplevels_ << CMapLevel(zoom, 24 - zoom);
+  maplevels_ << CMapLevel(zoom, 24 - zoom);
 
-    qSort(maplevels_);
+  std::sort(maplevels_.begin(), maplevels_.end());
 
-    return maplevel(zoom);
+  return maplevel(zoom);
 }
 
-void CTre1::write(QFile& file)
-{
-    offset_ = file.pos();
+void CTre1::write(QFile& file) {
+  offset_ = file.pos();
 
-    bool first = true;
-    for(CMapLevel& maplevel : maplevels_)
-    {
-        maplevel.write(file, first);
-        file.flush();
-    }
+  bool first = true;
+  for (CMapLevel& maplevel : maplevels_) {
+    maplevel.write(file, first);
+    file.flush();
+  }
 
-    size_ = file.pos() - offset_;
+  size_ = file.pos() - offset_;
 }
-
-

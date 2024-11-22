@@ -39,7 +39,7 @@ endif(APPLE)
 SUBDIRS(
     ./srcCommon
     ./srcDecodeImg
-    # ./srcEncodeImg
+    ./srcEncodeImg
 )
 
 CONFIGURE_FILE(

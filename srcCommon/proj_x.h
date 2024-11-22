@@ -30,7 +30,7 @@
 class CProj {
   Q_DECLARE_TR_FUNCTIONS(CProj)
  public:
-  CProj() = default;
+  CProj() = delete;
   CProj(const QString& crsSrc, const QString& crsTar);
   virtual ~CProj();
 
@@ -48,7 +48,8 @@ class CProj {
 
   using fErrMessage = std::function<void(const QString&)>;
 
-  static bool validProjStr(const QString projStr, bool allowLonLatToo, fErrMessage errMessage);
+  static bool validProjStr(const QString projStr, bool allowLonLatToo,
+                           fErrMessage errMessage);
 
  private:
   void _transform(qreal& lon, qreal& lat, PJ_DIRECTION dir) const;

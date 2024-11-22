@@ -17,7 +17,8 @@
 **********************************************************************************************/
 #pragma once
 
-#include <proj_api.h>
+#include <proj_x.h>
+
 #include <QMutex>
 #include <QPointF>
 #include <QString>
@@ -27,30 +28,28 @@
 class GDALDriverManager;
 class GDALDriver;
 
-class CGarminEncoder
-{
-public:
-    CGarminEncoder(const QString& filename);
-    virtual ~CGarminEncoder() = default;
+class CGarminEncoder {
+ public:
+  CGarminEncoder(const QString& filename);
+  virtual ~CGarminEncoder() = default;
 
-    void splitIntoTiles();
-    void createImage(const QString& filename, const QString &description);
-private:
-    void print(const char * format, ...);
-    void exportSubfileTile(quint32 xoff, quint32 yoff, quint32 xsize, quint32 ysize, const QString& filename, const QString& subfileName);
-    bool isSingleColor(const QImage& img);    
-    QMutex mutex;
+  void splitIntoTiles();
+  void createImage(const QString& filename, const QString& description);
 
-    QString filename;
-    QString basename;
-    QTemporaryDir tmpdir;
+ private:
+  void print(const char* format, ...);
+  void exportSubfileTile(quint32 xoff, quint32 yoff, quint32 xsize,
+                         quint32 ysize, const QString& filename,
+                         const QString& subfileName);
+  bool isSingleColor(const QImage& img);
+  QMutex mutex;
 
-    projPJ pjtar = nullptr;
+  QString filename;
+  QString basename;
+  QTemporaryDir tmpdir;
 
-    QPointF ref1;
-    QPointF ref2;
-    QPointF ref3;
-    QPointF ref4;
+  QPointF ref1;
+  QPointF ref2;
+  QPointF ref3;
+  QPointF ref4;
 };
-
-

@@ -16,90 +16,85 @@
 
 **********************************************************************************************/
 
+#include "items/CTile.h"
+
 #include "helpers/CBitWriter.h"
 #include "helpers/CLinePreparer.h"
 #include "types/CSubdiv.h"
-#include "items/CTile.h"
-
 
 CTile::CTile(quint32 indexTile, quint32 sizeTile, quint32 indexLabel)
-    : CPolyline(0x10613)
-    , indexTile_(indexTile)
-    , sizeTile_(sizeTile)
-    , indexLabel_(indexLabel)
-{
+    : CPolyline(0x10613),
+      indexTile_(indexTile),
+      sizeTile_(sizeTile),
+      indexLabel_(indexLabel) {}
+
+void CTile::setBoundaries(qreal northbound, qreal eastbound, qreal southbound,
+                          qreal westbound) {
+  northbound_ = northbound;
+  eastbound_ = eastbound;
+  southbound_ = southbound;
+  westbound_ = westbound;
+
+  append(QPointF(westbound_, northbound_));
+  append(QPointF(eastbound_, northbound_));
+  append(QPointF(eastbound_, southbound));
+  append(QPointF(westbound_, southbound));
+
+  // qDebug() << *this;
 }
 
-void CTile::setBoundaries(qreal northbound, qreal eastbound, qreal southbound, qreal westbound)
-{
-    northbound_ = northbound;
-    eastbound_ = eastbound;
-    southbound_ = southbound;
-    westbound_ = westbound;
+#define GARMIN_DEG(x)                              \
+  ((x) < 0x800000 ? (double)(x)*360.0 / 16777216.0 \
+                  : (double)((x)-0x1000000) * 360.0 / 16777216.0)
 
-    append(QPointF(westbound_, northbound_));
-//    append(QPointF(eastbound_, northbound_));
-//    append(QPointF(eastbound_, southbound));
-//    append(QPointF(westbound_, southbound));
+QByteArray CTile::encode(const CSubdiv& subdiv) const {
+  CLinePreparer lp(*this, subdiv);
 
-    qDebug() << *this;
-}
+  const CCoord& p0 = first();
+  mapunit_t deltaLon = subdiv.roundLonToLocalShifted(p0.getLongitude());
+  mapunit_t deltaLat = subdiv.roundLatToLocalShifted(p0.getLatitude());
 
-#define GARMIN_DEG(x) ((x) < 0x800000 ? (double)(x) * 360.0 / 16777216.0 : (double)((x) - 0x1000000) * 360.0 / 16777216.0)
+  QByteArray data;
+  QDataStream stream(&data, QIODevice::WriteOnly);
+  stream.setByteOrder(QDataStream::LittleEndian);
 
-QByteArray CTile::encode(const CSubdiv& subdiv) const
-{
-    CLinePreparer lp(*this, subdiv);
+  quint32 t = type();
+  t |= 0x20;  // has label
+  t |= 0x80;  // has extra bytes information
 
-    const CCoord& p0 = first();
-    mapunit_t deltaLon = subdiv.roundLonToLocalShifted(p0.getLongitude());
-    mapunit_t deltaLat = subdiv.roundLatToLocalShifted(p0.getLatitude());
+  stream << quint8(t >> 8);
+  stream << quint8(t);
+  stream << quint16(deltaLon & 0xFFFF);
+  stream << quint16(deltaLat & 0xFFFF);
 
-    QByteArray data;
-    QDataStream stream(&data, QIODevice::WriteOnly);
-    stream.setByteOrder(QDataStream::LittleEndian);
+  CBitWriter bw = lp.makeShortestBitStream(1);
+  int blen = bw.length();
+  Q_ASSERT_X(blen > 1, "blen", "zero length bitstream");
+  Q_ASSERT_X(blen < 0x10000, "blen", "bitstream too long ");
 
-    quint32 t = type();
-    t |= 0x20; // has label
-    t |= 0x80; // has extra bytes information
+  if (blen >= 0x7f) {
+    stream << quint8((blen << 2) | 2);
+    stream << quint8((blen << 2) >> 8);
+  } else {
+    stream << quint8((blen << 1) | 1);
+  }
 
-    stream << quint8(t >> 8);
-    stream << quint8(t);
-    stream << quint16(deltaLon & 0xFFFF);
-    stream << quint16(deltaLat & 0xFFFF);
+  stream.writeRawData(bw.data(), blen);
 
-    CBitWriter bw = lp.makeShortestBitStream(1);
-    int blen = bw.length();
-    Q_ASSERT_X(blen > 1, "blen", "zero length bitstream");
-    Q_ASSERT_X(blen < 0x10000, "blen", "bitstream too long ");
+  if (indexLabel_ != 0) {
+    stream << quint8(indexLabel_);
+    stream << quint8(indexLabel_ >> 8);
+    stream << quint8(indexLabel_ >> 16);
+  }
 
-    if (blen >= 0x7f)
-    {
-        stream << quint8((blen << 2) | 2);
-        stream << quint8((blen << 2) >> 8);
-    }
-    else
-    {
-        stream << quint8((blen << 1) | 1);
-    }
+  stream << quint8(0xE0);  // extended data type
+  stream << quint8(45);    // length of extended data
+  stream << quint16(indexTile_);
+  stream << quint32(degToMapUnit(northbound_) << 8);
+  stream << quint32(degToMapUnit(eastbound_) << 8);
+  stream << quint32(degToMapUnit(southbound_) << 8);
+  stream << quint32(degToMapUnit(westbound_) << 8);
+  stream << quint32(sizeTile_);
 
-    stream.writeRawData(bw.data(), blen);
-
-    if(indexLabel_ != 0)
-    {
-        stream << quint8(indexLabel_);
-        stream << quint8(indexLabel_ >> 8);
-        stream << quint8(indexLabel_ >> 16);
-    }
-
-    stream << quint8(0xE0); // extended data type
-    stream << quint8(45);   // length of extended data
-    stream << quint16(indexTile_);
-    stream << quint32(degToMapUnit(northbound_) << 8);
-    stream << quint32(degToMapUnit(eastbound_) << 8);
-    stream << quint32(degToMapUnit(southbound_) << 8);
-    stream << quint32(degToMapUnit(westbound_) << 8);
-    stream << quint32(sizeTile_);
-
-    return data;
+  return data;
 }

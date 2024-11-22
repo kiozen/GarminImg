@@ -20,62 +20,59 @@
 
 #include <QByteArray>
 
-class CBitWriter : public QByteArray
-{
-public:
-    CBitWriter();
-    virtual ~CBitWriter() = default;
+class CBitWriter : public QByteArray {
+ public:
+  CBitWriter();
+  virtual ~CBitWriter() = default;
 
-    qint32 getBitPosition() const {return bitoff;}
-    /**
-     * Put exactly one bit into the buffer.
-     *
-     * @param b The bottom bit of the integer is set at the current bit position.
-     */
-    void put1(qint32 b);
-    void put1(bool b);
-    /**
-     * Put a number of bits into the buffer, growing it if necessary.
-     *
-     * @param bval The bits to add, the lowest <b>n</b> bits will be added to
-     * the buffer.
-     * @param nb The number of bits.
-     */
-    void putn(quint32 bval, qint32 nb);
-    /**
-     * Write a signed value. If the value doesn't fit into nb bits, write one or more 1 << (nb-1)
-     * as a flag for extended range.
-     */
-    void sputn(qint32 bval, qint32 nb);
+  qint32 getBitPosition() const { return bitoff; }
+  /**
+   * Put exactly one bit into the buffer.
+   *
+   * @param b The bottom bit of the integer is set at the current bit position.
+   */
+  void put1(qint32 b);
+  void put1(bool b);
+  /**
+   * Put a number of bits into the buffer, growing it if necessary.
+   *
+   * @param bval The bits to add, the lowest <b>n</b> bits will be added to
+   * the buffer.
+   * @param nb The number of bits.
+   */
+  void putn(quint32 bval, qint32 nb);
+  /**
+   * Write a signed value. If the value doesn't fit into nb bits, write one or
+   * more 1 << (nb-1) as a flag for extended range.
+   */
+  void sputn(qint32 bval, qint32 nb);
 
-    CBitWriter& operator=(const CBitWriter& o)
-    {
-        QByteArray::operator=(o);
-        bitoff = o.bitoff;
-    }
+  CBitWriter& operator=(const CBitWriter& o) {
+    QByteArray::operator=(o);
+    bitoff = o.bitoff;
+    return *this;
+  }
 
-private:
-    /**
-     * Set everything up so that the given size can be accommodated.
-     * The buffer is re-sized if necessary.
-     *
-     * @param newlen The new length of the bit buffer in bits.
-     */
-    void ensureSize(qint32 newlen);
-    /**
-     * Get the byte offset for the given bit number.
-     *
-     * @param boff The number of the bit in question.
-     * @return The index into the byte array where the bit resides.
-     */
-    qint32 getByteOffset(qint32 boff);
+ private:
+  /**
+   * Set everything up so that the given size can be accommodated.
+   * The buffer is re-sized if necessary.
+   *
+   * @param newlen The new length of the bit buffer in bits.
+   */
+  void ensureSize(qint32 newlen);
+  /**
+   * Get the byte offset for the given bit number.
+   *
+   * @param boff The number of the bit in question.
+   * @return The index into the byte array where the bit resides.
+   */
+  qint32 getByteOffset(qint32 boff);
 
-    // Choose so that most roads will not fill it.
-    static constexpr auto INITIAL_BUF_SIZE = 20;
-    static constexpr auto BUFSIZE_INC = 50;
+  // Choose so that most roads will not fill it.
+  static constexpr auto INITIAL_BUF_SIZE = 20;
+  static constexpr auto BUFSIZE_INC = 50;
 
-    // The bit offset into the byte array.
-    qint32 bitoff = 0;
+  // The bit offset into the byte array.
+  qint32 bitoff = 0;
 };
-
-
