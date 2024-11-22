@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.0.0)
+cmake_minimum_required(VERSION 3.20.0)
 
 PROJECT(Garmin VERSION 1.0.0)
 
@@ -19,14 +19,11 @@ include(CPackConfig.cmake)
 include(ConfigureChecks.cmake)
 configure_file(config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config.h)
 
-find_package(PROJ4      REQUIRED)
+find_package(PROJ       REQUIRED)
 find_package(GDAL       REQUIRED)
 find_package(Qt5Core    REQUIRED)
 find_package(Qt5Widgets REQUIRED)
 find_package(Qt5Gui     REQUIRED)
-
-add_definitions(-DACCEPT_USE_OF_DEPRECATED_PROJ_API_H)
-
 
 if(UNIX)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++1z -lstdc++ -lm")
@@ -39,8 +36,11 @@ if (APPLE)
     SET(LINK_FLAGS "${LINK_FLAGS} -framework Foundation -framework DiskArbitration")
 endif(APPLE)
 
-SUBDIRS(./srcDecodeImg)
-SUBDIRS(./srcEncodeImg)
+SUBDIRS(
+    ./srcCommon
+    ./srcDecodeImg
+    # ./srcEncodeImg
+)
 
 CONFIGURE_FILE(
   "${CMAKE_CURRENT_SOURCE_DIR}/cmake_uninstall.cmake.in"

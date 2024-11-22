@@ -1,4 +1,4 @@
-set(APPLICATION_NAME decodeimg)
+set(TARGET_NAME decodeimg)
 set(CMAKE_AUTOMOC ON)
 
 set(SRCS
@@ -40,35 +40,35 @@ qt5_add_resources(RC_SRCS ${RCS})
 
 include_directories(
     SYSTEM # this prevents warnings from non-QMS headers
-    ${CMAKE_BINARY_DIR}
-    ${CMAKE_SOURCE_DIR}/include
-    ${PROJ4_INCLUDE_DIRS}
-    ${GDAL_INCLUDE_DIRS}
+    ../srcCommon
 )
+
+
 
 if(MSVC)
   add_definitions(-DGARMIN_MAKEDLL -D_CRT_SECURE_NO_DEPRECATE )
 endif(MSVC)
 
 
-add_executable( ${APPLICATION_NAME}
+add_executable( ${TARGET_NAME}
     ${SRCS}
     ${HDRS}
     ${UI_HDRS}
     ${RC_SRCS}
 )
 
-target_link_libraries( ${APPLICATION_NAME}
+target_link_libraries( ${TARGET_NAME}
     Qt5::Core
     Qt5::Gui
-    ${GDAL_LIBRARIES}
-    ${PROJ4_LIBRARIES}
+    GDAL::GDAL
+    PROJ::proj
+    common
 )
 
-target_compile_definitions(${APPLICATION_NAME} PUBLIC
+target_compile_definitions(${TARGET_NAME} PUBLIC
     -DVER_MAJOR=${PROJECT_VERSION_MAJOR}
     -DVER_MINOR=${PROJECT_VERSION_MINOR}
     -DVER_STEP=${PROJECT_VERSION_PATCH}
-    -DAPPLICATION_NAME=${APPLICATION_NAME}
+    -DTARGET_NAME=${TARGET_NAME}
 )
 

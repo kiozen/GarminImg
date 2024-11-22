@@ -25,7 +25,7 @@
 **********************************************************************************************/
 #pragma once
 
-#include <proj_api.h>
+#include <proj_x.h>
 #ifdef __MINGW32__
 #undef LP
 #endif

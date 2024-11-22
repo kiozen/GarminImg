@@ -17,156 +17,126 @@
 **********************************************************************************************/
 
 #include "IGarminStrTbl.h"
+
 #include <QtCore>
 
-IGarminStrTbl::IGarminStrTbl(const quint16 codepage, const quint8 mask, QObject * parent)
-    : QObject(parent)
-    , codepage(codepage)
-    , mask(mask)
-{
-    if(codepage != 0)
-    {
-        if(1250 <= codepage && codepage <= 1258)
-        {
-            char strcp[64];
-            sprintf(strcp, "Windows-%i", codepage);
-            codec = QTextCodec::codecForName(strcp);
-        }
-        else if(codepage == 950)
-        {
-            codec = QTextCodec::codecForName("Big5");
-        }
-        else if(codepage == 850)
-        {
-            codec = QTextCodec::codecForName("IBM 850");
-        }
-        else if(codepage == 65001)
-        {
-            codec = QTextCodec::codecForName("UTF-8");
-        }
-        else
-        {
-            qDebug() << "unknown codepage:" << codepage << "0x" << hex << codepage;
-            codec = QTextCodec::codecForName("Latin1");
-        }
+IGarminStrTbl::IGarminStrTbl(const quint16 codepage, const quint8 mask,
+                             QObject* parent)
+    : QObject(parent), codepage(codepage), mask(mask) {
+  if (codepage != 0) {
+    if (1250 <= codepage && codepage <= 1258) {
+      char strcp[64];
+      sprintf(strcp, "Windows-%i", codepage);
+      codec = QTextCodec::codecForName(strcp);
+    } else if (codepage == 950) {
+      codec = QTextCodec::codecForName("Big5");
+    } else if (codepage == 850) {
+      codec = QTextCodec::codecForName("IBM 850");
+    } else if (codepage == 65001) {
+      codec = QTextCodec::codecForName("UTF-8");
+    } else {
+      qDebug() << "unknown codepage:" << codepage << "0x" << Qt::hex
+               << codepage;
+      codec = QTextCodec::codecForName("Latin1");
     }
+  }
 
-    mask32   = mask;
-    mask32 <<= 8;
-    mask32  |= mask;
-    mask32 <<= 8;
-    mask32  |= mask;
-    mask32 <<= 8;
-    mask32  |= mask;
+  mask32 = mask;
+  mask32 <<= 8;
+  mask32 |= mask;
+  mask32 <<= 8;
+  mask32 |= mask;
+  mask32 <<= 8;
+  mask32 |= mask;
 
-    mask64   = mask32;
-    mask64 <<= 32;
-    mask64  |= mask32;
+  mask64 = mask32;
+  mask64 <<= 32;
+  mask64 |= mask32;
 }
 
+IGarminStrTbl::~IGarminStrTbl() {}
 
-IGarminStrTbl::~IGarminStrTbl()
-{
-}
+void IGarminStrTbl::readFile(QFile& file, quint32 offset, quint32 size,
+                             QByteArray& data) {
+  if (offset + size > file.size()) {
+    //         throw exce_t(eErrOpen, tr("Failed to read: ") + file.filename());
+    return;
+  }
 
-
-void IGarminStrTbl::readFile(QFile &file, quint32 offset, quint32 size, QByteArray& data)
-{
-    if(offset + size > file.size())
-    {
-        //         throw exce_t(eErrOpen, tr("Failed to read: ") + file.filename());
-        return;
-    }
-
-    file.seek(offset);
-    data = file.read(size);
-    // wenn mask == 0 ist kein xor noetig
-    if(mask == 0)
-    {
-        return;
-    }
+  file.seek(offset);
+  data = file.read(size);
+  // wenn mask == 0 ist kein xor noetig
+  if (mask == 0) {
+    return;
+  }
 
 #ifdef HOST_IS_64_BIT
-    quint64 * p64 = (quint64*)data.data();
-    for(quint32 i = 0; i < size / 8; ++i)
-    {
-        *p64++ ^= mask64;
-    }
-    quint32 rest = size % 8;
-    quint8 * p = (quint8*)p64;
+  quint64* p64 = (quint64*)data.data();
+  for (quint32 i = 0; i < size / 8; ++i) {
+    *p64++ ^= mask64;
+  }
+  quint32 rest = size % 8;
+  quint8* p = (quint8*)p64;
 #else
-    quint32 * p32 = (quint32*)data.data();
-    for(quint32 i = 0; i < size / 4; ++i)
-    {
-        *p32++ ^= mask32;
-    }
-    quint32 rest = size % 4;
-    quint8 * p = (quint8*)p32;
+  quint32* p32 = (quint32*)data.data();
+  for (quint32 i = 0; i < size / 4; ++i) {
+    *p32++ ^= mask32;
+  }
+  quint32 rest = size % 4;
+  quint8* p = (quint8*)p32;
 #endif
 
-    for(quint32 i = 0; i < rest; ++i)
-    {
-        *p++ ^= mask;
-    }
+  for (quint32 i = 0; i < rest; ++i) {
+    *p++ ^= mask;
+  }
 }
 
+quint32 IGarminStrTbl::calcOffset(QFile& file, const quint32 offset, type_e t) {
+  quint32 newOffset = offset;
 
-quint32 IGarminStrTbl::calcOffset(QFile& file, const quint32 offset, type_e t)
-{
-    quint32 newOffset = offset;
-
-    if(t == poi)
-    {
-        file.seek(offsetLBL6 + offset);
-        QByteArray buffer = file.read(sizeof(quint32));
-        newOffset = *(quint32*)buffer.data();
-        newOffset = (newOffset & 0x003FFFFF);
-    }
-    else if(t == net)
-    {
-        if(offsetNET1 == 0)
-        {
-            return 0xFFFFFFFF;
-        }
-
-        file.seek(offsetNET1 + (offset << addrshift2));
-        QByteArray buffer = file.read(sizeof(quint32));
-        newOffset = *(quint32*)buffer.data();
-        if(newOffset & 0x00400000)
-        {
-            return 0xFFFFFFFF;
-        }
-        newOffset = (newOffset & 0x003FFFFF);
+  if (t == poi) {
+    file.seek(offsetLBL6 + offset);
+    QByteArray buffer = file.read(sizeof(quint32));
+    newOffset = *(quint32*)buffer.data();
+    newOffset = (newOffset & 0x003FFFFF);
+  } else if (t == net) {
+    if (offsetNET1 == 0) {
+      return 0xFFFFFFFF;
     }
 
-    newOffset <<= addrshift1;
-    //     qDebug() << hex << newOffset;
-    return newOffset;
+    file.seek(offsetNET1 + (offset << addrshift2));
+    QByteArray buffer = file.read(sizeof(quint32));
+    newOffset = *(quint32*)buffer.data();
+    if (newOffset & 0x00400000) {
+      return 0xFFFFFFFF;
+    }
+    newOffset = (newOffset & 0x003FFFFF);
+  }
+
+  newOffset <<= addrshift1;
+  //     qDebug() << Qt::hex << newOffset;
+  return newOffset;
 }
 
+QString IGarminStrTbl::processLabel(const char* buffer,
+                                    unsigned lastSeperator) {
+  QString label;
+  if (codepage != 0) {
+    label = codec->toUnicode(buffer);
+  } else {
+    label = buffer;
+  }
 
-QString IGarminStrTbl::processLabel(const char * buffer, unsigned lastSeperator)
-{
-    QString label;
-    if (codepage != 0)
-    {
-        label = codec->toUnicode(buffer);
-    }
-    else
-    {
-        label = buffer;
-    }
-
-//    if(lastSeperator == 0x1F)
-//    {
-//        bool ok = false;
-//        qreal ele = label.toDouble(&ok);
-//        if(ok)
-//        {
-//            QString val, unit;
-//            IUnit::self().feet2elevation(ele, val, unit);
-//            label = val + " " + unit;
-//        }
-//    }
-    return label;
+  //    if(lastSeperator == 0x1F)
+  //    {
+  //        bool ok = false;
+  //        qreal ele = label.toDouble(&ok);
+  //        if(ok)
+  //        {
+  //            QString val, unit;
+  //            IUnit::self().feet2elevation(ele, val, unit);
+  //            label = val + " " + unit;
+  //        }
+  //    }
+  return label;
 }
