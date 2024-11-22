@@ -18,14 +18,9 @@
 
 #include "sections/CSection.h"
 
-CSection::CSection(quint16 recSize)
-{
-    sizeRecord_ = recSize;
-}
+CSection::CSection(quint16 recSize) { sizeRecord_ = recSize; }
 
-
-void CSection::write(QFile& file)
-{
-    offset_ = file.pos();
-    size_ = 0;
+void CSection::write(QFile& file) {
+  offset_ = file.pos();
+  size_ = 0;
 }

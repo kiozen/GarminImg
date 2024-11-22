@@ -17,35 +17,27 @@
 **********************************************************************************************/
 #pragma once
 
-#include "CException.h"
-
+#include <QRunnable>
 #include <functional>
 #include <iostream>
-#include <QRunnable>
+
+#include "CException.h"
 
 using fSubfileTask = std::function<void()>;
-class CSubfileTask : public QRunnable
-{
-public:
-    CSubfileTask(fSubfileTask task)
-        : task(task)
-    {
-    }
-    ~CSubfileTask() = default;
+class CSubfileTask : public QRunnable {
+ public:
+  CSubfileTask(fSubfileTask task) : task(task) {}
+  ~CSubfileTask() = default;
 
-    void run()
-    {
-        try
-        {
-            task();
-        }
-        catch(const CException& e)
-        {
-            std::cerr << e.what();
-            exit(-1);
-        }
+  void run() {
+    try {
+      task();
+    } catch (const CException& e) {
+      std::cerr << e.what();
+      exit(-1);
     }
+  }
 
-private:
-    fSubfileTask task;
+ private:
+  fSubfileTask task;
 };

@@ -29,12 +29,9 @@
 
 class IGarminStrTbl;
 
-#define GARMIN_DEG(x)                              \
-  ((x) < 0x800000 ? (double)(x)*360.0 / 16777216.0 \
-                  : (double)((x)-0x1000000) * 360.0 / 16777216.0)
-#define GARMIN_RAD(x)                                     \
-  ((x) < 0x800000 ? (double)(x) * (2 * M_PI) / 16777216.0 \
-                  : (double)((x)-0x1000000) * (2 * M_PI) / 16777216.0)
+#define GARMIN_DEG(x) ((x) < 0x800000 ? (double)(x)*360.0 / 16777216.0 : (double)((x)-0x1000000) * 360.0 / 16777216.0)
+#define GARMIN_RAD(x) \
+  ((x) < 0x800000 ? (double)(x) * (2 * M_PI) / 16777216.0 : (double)((x)-0x1000000) * (2 * M_PI) / 16777216.0)
 typedef quint8 quint24[3];
 
 #pragma pack(1)
@@ -125,72 +122,54 @@ struct gmp_hdr_t : public subfile_hdr_t {
 };
 
 struct hdr_tre_t : public subfile_hdr_t {
-  quint24 northbound = {
-      0};  ///< 0x00000015 .. 0x00000017  // writer.put3s(area.getMaxLat());
-  quint24 eastbound = {
-      0};  ///< 0x00000018 .. 0x0000001A  // Utils.put3sLongitude(writer,
-           ///< area.getMaxLong());
-  quint24 southbound = {
-      0};  ///< 0x0000001B .. 0x0000001D  // writer.put3s(area.getMinLat());
-  quint24 westbound = {
-      0};  ///< 0x0000001E .. 0x00000020  // writer.put3s(area.getMinLong()); //
-           ///< minLong cant be +180
-  quint32 tre1_offset =
-      0;  ///< 0x00000021 .. 0x00000024  // writer.put4(getMapLevelsPos());
-  quint32 tre1_size =
-      0;  ///< 0x00000025 .. 0x00000028  // writer.put4(getMapLevelsSize());
-  quint32 tre2_offset =
-      0;  ///< 0x00000029 .. 0x0000002C  // writer.put4(getSubdivPos());
-  quint32 tre2_size =
-      0;  ///< 0x0000002D .. 0x00000030  // writer.put4(getSubdivSize());
-  quint32 tre3_offset =
-      0;  ///< 0x00000031 .. 0x00000034  // copyright.writeSectionInfo(writer);
+  quint24 northbound = {0};                   ///< 0x00000015 .. 0x00000017  // writer.put3s(area.getMaxLat());
+  quint24 eastbound = {0};                    ///< 0x00000018 .. 0x0000001A  // Utils.put3sLongitude(writer,
+                                              ///< area.getMaxLong());
+  quint24 southbound = {0};                   ///< 0x0000001B .. 0x0000001D  // writer.put3s(area.getMinLat());
+  quint24 westbound = {0};                    ///< 0x0000001E .. 0x00000020  // writer.put3s(area.getMinLong()); //
+                                              ///< minLong cant be +180
+  quint32 tre1_offset = 0;                    ///< 0x00000021 .. 0x00000024  // writer.put4(getMapLevelsPos());
+  quint32 tre1_size = 0;                      ///< 0x00000025 .. 0x00000028  // writer.put4(getMapLevelsSize());
+  quint32 tre2_offset = 0;                    ///< 0x00000029 .. 0x0000002C  // writer.put4(getSubdivPos());
+  quint32 tre2_size = 0;                      ///< 0x0000002D .. 0x00000030  // writer.put4(getSubdivSize());
+  quint32 tre3_offset = 0;                    ///< 0x00000031 .. 0x00000034  // copyright.writeSectionInfo(writer);
   quint32 tre3_size = 0;                      ///< 0x00000035 .. 0x00000038  //
   quint16 tre3_rec_size = 0;                  ///< 0x00000039 .. 0x0000003A  //
   quint8 byte0x0000003B_0x0000003E[4] = {0};  // writer.put4(0);
-  quint8 POI_flags =
-      0;  ///< 0x0000003F                // writer.put1u(getPoiDisplayFlags());
-  quint24 render_prio = {0x14, 0, 0};  ///< 0x00000040 .. 0x00000042  // 0x0014
-  quint8 byte0x00000043_0x00000049[7] = {
-      0x01, 0x03, 0x11, 0x00,
-      0x01, 0x00, 0x00};  // 00 01 08 24 00 01 00 00 to be investigated
-  quint32 tre4_offset =
-      0;  ///< 0x0000004A .. 0x0000004D  // polyline.writeSectionInfo(writer);
+  quint8 POI_flags = 0;                       ///< 0x0000003F                // writer.put1u(getPoiDisplayFlags());
+  quint24 render_prio = {0x14, 0, 0};         ///< 0x00000040 .. 0x00000042  // 0x0014
+  quint8 byte0x00000043_0x00000049[7] = {0x01, 0x03, 0x11, 0x00,
+                                         0x01, 0x00, 0x00};  // 00 01 08 24 00 01 00 00 to be investigated
+  quint32 tre4_offset = 0;                    ///< 0x0000004A .. 0x0000004D  // polyline.writeSectionInfo(writer);
   quint32 tre4_size = 0;                      ///< 0x0000004E .. 0x00000051  //
   quint16 tre4_rec_size = 0;                  ///< 0x00000052 .. 0x00000053  //
   quint8 byte0x00000054_0x00000057[4] = {0};  // writer.put4(0);
-  quint32 tre5_offset =
-      0;  ///< 0x00000058 .. 0x0000005B  // polygon.writeSectionInfo(writer);
+  quint32 tre5_offset = 0;                    ///< 0x00000058 .. 0x0000005B  // polygon.writeSectionInfo(writer);
   quint32 tre5_size = 0;                      ///< 0x0000005C .. 0x0000005F  //
   quint16 tre5_rec_size = 0;                  ///< 0x00000060 .. 0x00000061  //
   quint8 byte0x00000062_0x00000065[4] = {0};  // writer.put4(0);
-  quint32 tre6_offset =
-      0;  ///< 0x00000066 .. 0x00000069  // points.writeSectionInfo(writer);
+  quint32 tre6_offset = 0;                    ///< 0x00000066 .. 0x00000069  // points.writeSectionInfo(writer);
   quint32 tre6_size = 0;                      ///< 0x0000006A .. 0x0000006D  //
   quint16 tre6_rec_size = 0;                  ///< 0x0000006E .. 0x0000006F  //
   quint8 byte0x00000070_0x00000073[4] = {0};  // writer.put4(0);
   /*-----------------------------------------------------*/
-  quint32 map_id =
-      0;  ///< 0x00000074 .. 0x00000077  // writer.put4(getMapId());
+  quint32 map_id = 0;                         ///< 0x00000074 .. 0x00000077  // writer.put4(getMapId());
   quint8 byte0x00000078_0x0000007B[4] = {0};  // writer.put4(0);
   // Object groups V2 (CTreGroup2).
-  quint32 tre7_offset = 0;  ///< 0x0000007C .. 0x0000007F  //Groups2Offset //
-                            ///< extTypeOffsets.writeSectionInfo(writer, true);
-  quint32 tre7_size = 0;    ///< 0x00000080 .. 0x00000083  //dwGroups2Length
-  quint16 tre7_rec_size = 0;  ///< 0x00000084 .. 0x00000085  //wGroup2RecSize
+  quint32 tre7_offset = 0;                    ///< 0x0000007C .. 0x0000007F  //Groups2Offset //
+                                              ///< extTypeOffsets.writeSectionInfo(writer, true);
+  quint32 tre7_size = 0;                      ///< 0x00000080 .. 0x00000083  //dwGroups2Length
+  quint16 tre7_rec_size = 0;                  ///< 0x00000084 .. 0x00000085  //wGroup2RecSize
   quint8 byte0x00000086_0x00000089[4] = {0};  // 01 00 00 00
   // Order: polyline, polygon, POI; each sorted by type (1 type 1 levels 1
   // subtype)
-  quint32 tre8_offset = 0;    ///< 0x0000008A .. 0x0000008D  //
-                              ///< extTypeOverviews.writeSectionInfo(writer);
-  quint32 tre8_size = 0;      ///< 0x0000008E .. 0x00000091  //
-  quint16 tre8_rec_size = 0;  ///< 0x00000092 .. 0x00000093  //
-  quint16 polyl2_types_num =
-      0;  ///< 0x00000094 .. 0x00000095  // writer.put2u(numExtTypeLineTypes);
-  quint16 polyg2_types_num =
-      0;  ///< 0x00000096 .. 0x00000097  // writer.put2u(numExtTypeAreaTypes);
-  quint16 poi2_types_num =
-      0;  ///< 0x00000098 .. 0x00000099  // writer.put2u(numExtTypePointTypes);
+  quint32 tre8_offset = 0;       ///< 0x0000008A .. 0x0000008D  //
+                                 ///< extTypeOverviews.writeSectionInfo(writer);
+  quint32 tre8_size = 0;         ///< 0x0000008E .. 0x00000091  //
+  quint16 tre8_rec_size = 0;     ///< 0x00000092 .. 0x00000093  //
+  quint16 polyl2_types_num = 0;  ///< 0x00000094 .. 0x00000095  // writer.put2u(numExtTypeLineTypes);
+  quint16 polyg2_types_num = 0;  ///< 0x00000096 .. 0x00000097  // writer.put2u(numExtTypeAreaTypes);
+  quint16 poi2_types_num = 0;    ///< 0x00000098 .. 0x00000099  // writer.put2u(numExtTypePointTypes);
 
   /*-----------------------------------------------------*/
   quint8 key[16] = {0};  ///< 0x0000009A .. 0x000000A5  // MapValues mv = new
@@ -202,15 +181,15 @@ struct hdr_tre_t : public subfile_hdr_t {
   // writer.put4(mv.value(3));
 
   quint8 byte0x000000AA_0x000000AD[4] = {0};  // writer.put4(0);
-  quint32 tre9_offset;    ///< 0x000000AE .. 0x000000B1  // writer.put4(0);
-  quint32 tre9_size;      ///< 0x000000B2 .. 0x000000B5  // writer.put4(0);
-  quint16 tre9_rec_size;  ///< 0x000000B6 .. 0x000000B7  // writer.put2u(0);
+  quint32 tre9_offset;                        ///< 0x000000AE .. 0x000000B1  // writer.put4(0);
+  quint32 tre9_size;                          ///< 0x000000B2 .. 0x000000B5  // writer.put4(0);
+  quint16 tre9_rec_size;                      ///< 0x000000B6 .. 0x000000B7  // writer.put2u(0);
   quint8 byte0x000000B8_0x000000BB[4] = {0};  // writer.put4(0);
   quint32 tre10_offset;                       ///< 0x000000BC .. 0x000000BF //
   quint32 tre10_size;                         ///< 0x000000C0 .. 0x000000C3 //
   quint16 tre10_rec_size;                     ///< 0x000000C4 .. 0x000000C5 //
   quint8 byte0x000000C6_0x000000CE[9] = {0};  //
-  quint32 map_number;  ///< 0x00000CF .. 0x000000D2  // map number as hex
+  quint32 map_number;                         ///< 0x00000CF .. 0x000000D2  // map number as hex
 
   void print(quint32 offset);
 };
@@ -234,15 +213,11 @@ struct hdr_rgn_t : public subfile_hdr_t {
 };
 
 struct hdr_lbl_t : public subfile_hdr_t {
-  quint32 lbl1_offset =
-      0;  ///< 0x00000015 .. 0x00000018   // writer.put4(HEADER_LEN +
-          ///< sortDescriptionLength);
-  quint32 lbl1_length =
-      0;  ///< 0x00000019 .. 0x0000001C   // writer.put4(getLabelSize());
-  quint8 addr_shift =
-      0;  ///< 0x0000001D                 // writer.put1u(offsetMultiplier);
-  quint8 coding =
-      0;  ///< 0x0000001E                 // writer.put1u(encodingType);
+  quint32 lbl1_offset = 0;    ///< 0x00000015 .. 0x00000018   // writer.put4(HEADER_LEN +
+                              ///< sortDescriptionLength);
+  quint32 lbl1_length = 0;    ///< 0x00000019 .. 0x0000001C   // writer.put4(getLabelSize());
+  quint8 addr_shift = 0;      ///< 0x0000001D                 // writer.put1u(offsetMultiplier);
+  quint8 coding = 0;          ///< 0x0000001E                 // writer.put1u(encodingType);
   quint32 lbl2_offset = 0;    ///< 0x0000001F .. 0x00000022   // not used
   quint32 lbl2_length = 0;    ///< 0x00000023 .. 0x00000026
   quint16 lbl2_rec_size = 0;  ///< 0x00000027 .. 0x00000028
@@ -284,7 +259,7 @@ struct hdr_lbl_t : public subfile_hdr_t {
   quint32 lbl11_length = 0;    ///< 0x000000A0 .. 0x000000A3
   quint16 lbl11_rec_size = 0;  ///< 0x000000A4 .. 0x000000A5
   quint8 byte0x000000A6_0x000000A9[4] = {0};
-  quint16 codepage = 0;  ///< 0x000000AA .. 0x000000AB  optional check length
+  quint16 codepage = 0;                       ///< 0x000000AA .. 0x000000AB  optional check length
   quint8 byte0x000000AC_0x000000AF[4] = {0};  // 07 00 02 80 or 12 00 01 80
   quint32 lbl12_offset = 0;                   ///< 0x000000B0 .. 0x000000B3
   quint32 lbl12_length = 0;                   ///< 0x000000B4 .. 0x000000B7
@@ -348,8 +323,7 @@ struct hdr_lbl_t : public subfile_hdr_t {
   quint32 lbl27_length = 0;    ///< 0x000000F0 .. 0x000000F3
   quint16 lbl27_rec_size = 0;  ///< 0x000000F4 .. 0x000000F5
   quint8 byte0x00000180_0x00000183[4] = {0};
-  quint32 lbl28_offset =
-      0;  ///< 0x000000EC .. 0x000000EF   // list of JPG offsets into LBL29
+  quint32 lbl28_offset = 0;    ///< 0x000000EC .. 0x000000EF   // list of JPG offsets into LBL29
   quint32 lbl28_length = 0;    ///< 0x000000F0 .. 0x000000F3
   quint16 lbl28_rec_size = 0;  ///< 0x000000F4 .. 0x000000F5
   quint8 byte0x0000018E_0x00000191[4] = {0};
@@ -417,9 +391,7 @@ struct tre_1_t {
   quint8 bits;
   quint16 subdiv;
 
-  void print() {
-    printf("zoom: %02X bits: %i subdiv: %i\n", zoom, bits, subdiv);
-  }
+  void print() { printf("zoom: %02X bits: %i subdiv: %i\n", zoom, bits, subdiv); }
 };
 
 // map subdivision definition, without pointer to the lower level subparts

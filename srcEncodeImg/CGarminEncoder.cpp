@@ -35,17 +35,14 @@ constexpr quint32 YSIZE_SUPER_TILE = 5120;
 constexpr quint32 XSIZE_TILE = 512;
 constexpr quint32 YSIZE_TILE = 512;
 
-bool is_equal(const qreal lhs, const qreal rhs) {
-  return fabs(lhs - rhs) <= std::numeric_limits<double>::epsilon();
-}
+bool is_equal(const qreal lhs, const qreal rhs) { return fabs(lhs - rhs) <= std::numeric_limits<double>::epsilon(); }
 
 CGarminEncoder::CGarminEncoder(const QString& filename)
     : filename(QDir::current().absoluteFilePath(filename)),
       basename(QFileInfo(filename).baseName()),
       tmpdir(allArgs.value("tmpdir") + basename + "_") {
   if (!tmpdir.isValid()) {
-    throw CException("Could not create temp. working directory: " +
-                     tmpdir.path());
+    throw CException("Could not create temp. working directory: " + tmpdir.path());
   }
   tmpdir.setAutoRemove(!allArgs.isSet("keep"));
 }
@@ -121,8 +118,8 @@ void CGarminEncoder::splitIntoTiles() {
   proj.transform(_ref3, PJ_FWD);
   proj.transform(_ref4, PJ_FWD);
 
-  if (!is_equal(_ref1.y(), _ref2.y()) || !is_equal(_ref3.y(), _ref4.y()) ||
-      !is_equal(_ref1.x(), _ref4.x()) || !is_equal(_ref2.x(), _ref3.x())) {
+  if (!is_equal(_ref1.y(), _ref2.y()) || !is_equal(_ref3.y(), _ref4.y()) || !is_equal(_ref1.x(), _ref4.x()) ||
+      !is_equal(_ref2.x(), _ref3.x())) {
     GDALClose(dataset);
     throw CException(
         "Bad projection. Must be Mercator-like ('+proj=merc' or "
@@ -134,9 +131,8 @@ void CGarminEncoder::splitIntoTiles() {
   quint32 xoff = 0;
   quint32 yoff = 0;
 
-  QString subFileBaseName =
-      QString::number(qFloor(_ref1.x() * RAD_TO_DEG)).rightJustified(2, '0') +
-      QString::number(qFloor(_ref1.y() * RAD_TO_DEG)).rightJustified(2, '0');
+  QString subFileBaseName = QString::number(qFloor(_ref1.x() * RAD_TO_DEG)).rightJustified(2, '0') +
+                            QString::number(qFloor(_ref1.y() * RAD_TO_DEG)).rightJustified(2, '0');
 
   const int N = qCeil(qreal(xsize_px) / XSIZE_SUPER_TILE);
   const int M = qCeil(qreal(ysize_px) / YSIZE_SUPER_TILE);
@@ -150,9 +146,7 @@ void CGarminEncoder::splitIntoTiles() {
 
   for (int m = 0; m < M; m++) {
     for (int n = 0; n < N; n++) {
-      QString subfileName =
-          subFileBaseName +
-          QString::number(subfileCount++).rightJustified(4, '0');
+      QString subfileName = subFileBaseName + QString::number(subfileCount++).rightJustified(4, '0');
 
       quint32 xsize = qMin(XSIZE_SUPER_TILE, xsize_px - xoff);
       quint32 ysize = qMin(YSIZE_SUPER_TILE, ysize_px - yoff);
@@ -160,8 +154,7 @@ void CGarminEncoder::splitIntoTiles() {
       if (numThreads == 1) {
         exportSubfileTile(xoff, yoff, xsize, ysize, filename, subfileName);
       } else {
-        CSubfileTask* task = new CSubfileTask([this, xoff, yoff, xsize, ysize,
-                                               subfileName]() {
+        CSubfileTask* task = new CSubfileTask([this, xoff, yoff, xsize, ysize, subfileName]() {
           exportSubfileTile(xoff, yoff, xsize, ysize, filename, subfileName);
         });
         QThreadPool::globalInstance()->start(task);
@@ -181,10 +174,8 @@ done1:
   GDALClose(dataset);
 }
 
-void CGarminEncoder::exportSubfileTile(quint32 xoff, quint32 yoff,
-                                       quint32 xsize, quint32 ysize,
-                                       const QString& filename,
-                                       const QString& subfileName) {
+void CGarminEncoder::exportSubfileTile(quint32 xoff, quint32 yoff, quint32 xsize, quint32 ysize,
+                                       const QString& filename, const QString& subfileName) {
   GDALDataset* dataset = nullptr;
   try {
     dataset = (GDALDataset*)GDALOpen(filename.toUtf8().data(), GA_ReadOnly);
@@ -215,8 +206,7 @@ void CGarminEncoder::exportSubfileTile(quint32 xoff, quint32 yoff,
         }
       } else {
         GDALClose(dataset);
-        throw CException("File must be 8 bit palette or gray indexed. " +
-                         filename);
+        throw CException("File must be 8 bit palette or gray indexed. " + filename);
       }
 
       int success = 0;
@@ -227,8 +217,7 @@ void CGarminEncoder::exportSubfileTile(quint32 xoff, quint32 yoff,
           tmp.setAlpha(0);
           colortable[idx] = tmp.rgba();
         } else {
-          throw CException("Index for no data value is out of bound. " +
-                           filename);
+          throw CException("Index for no data value is out of bound. " + filename);
         }
       }
     }
@@ -277,15 +266,12 @@ void CGarminEncoder::exportSubfileTile(quint32 xoff, quint32 yoff,
 
     CFileGmp gmpFile(subfileName);
     gmpFile.addCopyright("Copyright <someone>");
-    CSubdiv& subdiv1 =
-        gmpFile.addSubdiv(2, ref1.y() * RAD_TO_DEG, ref2.x() * RAD_TO_DEG,
-                          ref2.y() * RAD_TO_DEG, ref1.x() * RAD_TO_DEG);
-    CSubdiv& subdiv2 =
-        gmpFile.addSubdiv(1, ref1.y() * RAD_TO_DEG, ref2.x() * RAD_TO_DEG,
-                          ref2.y() * RAD_TO_DEG, ref1.x() * RAD_TO_DEG);
-    CSubdiv& subdiv3 =
-        gmpFile.addSubdiv(0, ref1.y() * RAD_TO_DEG, ref2.x() * RAD_TO_DEG,
-                          ref2.y() * RAD_TO_DEG, ref1.x() * RAD_TO_DEG);
+    CSubdiv& subdiv1 = gmpFile.addSubdiv(2, ref1.y() * RAD_TO_DEG, ref2.x() * RAD_TO_DEG, ref2.y() * RAD_TO_DEG,
+                                         ref1.x() * RAD_TO_DEG);
+    CSubdiv& subdiv2 = gmpFile.addSubdiv(1, ref1.y() * RAD_TO_DEG, ref2.x() * RAD_TO_DEG, ref2.y() * RAD_TO_DEG,
+                                         ref1.x() * RAD_TO_DEG);
+    CSubdiv& subdiv3 = gmpFile.addSubdiv(0, ref1.y() * RAD_TO_DEG, ref2.x() * RAD_TO_DEG, ref2.y() * RAD_TO_DEG,
+                                         ref1.x() * RAD_TO_DEG);
     subdiv1.setNext(subdiv2.number());
     subdiv2.setNext(subdiv3.number());
 
@@ -307,9 +293,8 @@ void CGarminEncoder::exportSubfileTile(quint32 xoff, quint32 yoff,
           QImage img(QSize(xsizeTile, ysizeTile), QImage::Format_Indexed8);
           img.setColorTable(colortable);
 
-          CPLErr err = pBand->RasterIO(
-              GF_Read, xoff + xoffTile, yoff + yoffTile, xsizeTile, ysizeTile,
-              img.bits(), xsizeTile, ysizeTile, GDT_Byte, 0, 0);
+          CPLErr err = pBand->RasterIO(GF_Read, xoff + xoffTile, yoff + yoffTile, xsizeTile, ysizeTile, img.bits(),
+                                       xsizeTile, ysizeTile, GDT_Byte, 0, 0);
           if (err != CE_None) {
             throw CException("Failed to export tile from " + subfileName);
           }
@@ -318,21 +303,16 @@ void CGarminEncoder::exportSubfileTile(quint32 xoff, quint32 yoff,
 
           if (!isSingleColor(img)) {
             const QString& tilepath =
-                dir.absoluteFilePath(QString("%1_%2_%3.jpg")
-                                         .arg(++tileCount)
-                                         .arg(ref1.y())
-                                         .arg(ref1.x()));
+                dir.absoluteFilePath(QString("%1_%2_%3.jpg").arg(++tileCount).arg(ref1.y()).arg(ref1.x()));
             img.save(tilepath);
 
             QPointF ref1 = trFwd.map(QPointF(xoff + xoffTile, yoff + yoffTile));
-            QPointF ref2 = trFwd.map(QPointF(xoff + xoffTile + xsizeTile,
-                                             yoff + yoffTile + ysizeTile));
+            QPointF ref2 = trFwd.map(QPointF(xoff + xoffTile + xsizeTile, yoff + yoffTile + ysizeTile));
 
             proj.transform(ref1, PJ_FWD);
             proj.transform(ref2, PJ_FWD);
 
-            gmpFile.addTile(tilepath, ref1.y() * RAD_TO_DEG,
-                            ref2.x() * RAD_TO_DEG, ref2.y() * RAD_TO_DEG,
+            gmpFile.addTile(tilepath, ref1.y() * RAD_TO_DEG, ref2.x() * RAD_TO_DEG, ref2.y() * RAD_TO_DEG,
                             ref1.x() * RAD_TO_DEG, subdivNumbers);
 
             QFile::remove(tilepath);
@@ -363,13 +343,11 @@ void CGarminEncoder::exportSubfileTile(quint32 xoff, quint32 yoff,
   }
 }
 
-void CGarminEncoder::createImage(const QString& filename,
-                                 const QString& description) {
+void CGarminEncoder::createImage(const QString& filename, const QString& description) {
   CFileImg tableFAT;
   tableFAT.setDescription(description);
   QDir dir(tmpdir.path());
-  const QString& filenameMps =
-      QString::number(tableFAT.hash(), 16).toUpper() + ".mps";
+  const QString& filenameMps = QString::number(tableFAT.hash(), 16).toUpper() + ".mps";
 
   QFile fileMps(dir.absoluteFilePath(filenameMps));
   if (!fileMps.open(QIODevice::WriteOnly)) {
@@ -382,8 +360,7 @@ void CGarminEncoder::createImage(const QString& filename,
   quint16 idProduct = 1;
   quint16 idFamily = 2300;
 
-  mps << quint8(0x46) << quint16(4 + lengthDescription) << idProduct
-      << idFamily;
+  mps << quint8(0x46) << quint16(4 + lengthDescription) << idProduct << idFamily;
   mps.writeRawData(description.toLatin1(), lengthDescription);
 
   for (const QFileInfo& info : dir.entryInfoList(QDir::Files, QDir::Name)) {

@@ -21,13 +21,10 @@
 
 class QByteArray;
 
-class CRgn2 : public ISection
-{
-public:
-    CRgn2();
-    virtual ~CRgn2() = default;
+class CRgn2 : public ISection {
+ public:
+  CRgn2();
+  virtual ~CRgn2() = default;
 
-    quint32 addPolygons2(const QByteArray& polygons);
+  quint32 addPolygons2(const QByteArray& polygons);
 };
-
-

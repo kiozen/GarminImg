@@ -21,28 +21,22 @@
 #include <QtCore>
 #include <QtGui>
 
-CFileRgn::CFileRgn()
-{
+CFileRgn::CFileRgn() {}
+
+void CFileRgn::writeHdr(QFile& file) {
+  hdrRgn.setRgn1(rgn1);
+  hdrRgn.setRgn2(rgn2);
+  hdrRgn.setRgn3(rgn3);
+  hdrRgn.setRgn4(rgn4);
+  hdrRgn.setRgn5(rgn5);
+
+  hdrRgn.write(file);
 }
 
-
-void CFileRgn::writeHdr(QFile& file)
-{
-    hdrRgn.setRgn1(rgn1);
-    hdrRgn.setRgn2(rgn2);
-    hdrRgn.setRgn3(rgn3);
-    hdrRgn.setRgn4(rgn4);
-    hdrRgn.setRgn5(rgn5);
-
-    hdrRgn.write(file);
+void CFileRgn::writeData(QFile& file) {
+  rgn1.write(file);
+  rgn2.write(file);
+  rgn3.write(file);
+  rgn4.write(file);
+  rgn5.write(file);
 }
-
-void CFileRgn::writeData(QFile& file)
-{
-    rgn1.write(file);
-    rgn2.write(file);
-    rgn3.write(file);
-    rgn4.write(file);
-    rgn5.write(file);
-}
-

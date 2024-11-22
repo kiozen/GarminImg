@@ -17,24 +17,19 @@
 **********************************************************************************************/
 #pragma once
 
-#include "types/coords.h"
-
 #include <QtCore>
+
+#include "types/coords.h"
 class CSubdiv;
 
-class IItem
-{
-public:
-    IItem(quint32 type);
-    virtual ~IItem() = default;
+class IItem {
+ public:
+  IItem(quint32 type);
+  virtual ~IItem() = default;
 
-    quint32 type() const {return type_;}
-    bool hasExtendedType() const {return type_ > 0x10000;}
+  quint32 type() const { return type_; }
+  bool hasExtendedType() const { return type_ > 0x10000; }
 
-
-protected:
-
-    quint32 type_ = 0;
+ protected:
+  quint32 type_ = 0;
 };
-
-

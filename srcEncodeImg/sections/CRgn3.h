@@ -21,13 +21,10 @@
 
 class QByteArray;
 
-class CRgn3 : public ISection
-{
-public:
-    CRgn3();
-    virtual ~CRgn3() = default;
+class CRgn3 : public ISection {
+ public:
+  CRgn3();
+  virtual ~CRgn3() = default;
 
-    quint32 addPolylines2(const QByteArray& polylines);
+  quint32 addPolylines2(const QByteArray& polylines);
 };
-
-

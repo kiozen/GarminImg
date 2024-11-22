@@ -25,72 +25,54 @@
 #include "sections/CTre7.h"
 #include "sections/CTre8.h"
 
+class CFileTre {
+ public:
+  CFileTre(const QString& mapNumber);
+  virtual ~CFileTre() = default;
 
-class CFileTre
-{
-public:
-    CFileTre(const QString& mapNumber);
-    virtual ~CFileTre() = default;
+  const CHdrTre& header() const { return hdrTre; }
 
-    const CHdrTre& header() const
-    {
-        return hdrTre;
-    }
+  void writeHdr(QFile& file);
+  void writeData(QFile& file);
 
-    void writeHdr(QFile& file);
-    void writeData(QFile& file);
+  void setTre7RecSize(quint16 size) { tre7.setSizeRecord(size); }
+  void addTre7Record(quint32 offsetPolygon2);
+  void addTre7Record(quint32 offsetPolygon2, quint32 offsetPolyline2);
+  void addTre7Record(quint32 offsetPolygon2, quint32 offsetPolyline2, quint32 offsetPoint2);
 
-    void setTre7RecSize(quint16 size){tre7.setSizeRecord(size);}
-    void addTre7Record(quint32 offsetPolygon2);
-    void addTre7Record(quint32 offsetPolygon2, quint32 offsetPolyline2);
-    void addTre7Record(quint32 offsetPolygon2, quint32 offsetPolyline2, quint32 offsetPoint2);
+  void addTre8Polygon(quint32 type, quint8 maplevel);
 
-    void addTre8Polygon(quint32 type, quint8 maplevel);
+  void finalizeSubdivs();
 
-    void finalizeSubdivs();
+  void addCopyright(quint32 offset) { tre3.add(offset); }
 
-    void addCopyright(quint32 offset)
-    {
-        tre3.add(offset);
-    }
+  CSubdiv& addSubdiv(quint8 zoom, qreal northbound, qreal eastbound, qreal southbound, qreal westbound);
 
-    CSubdiv &addSubdiv(quint8 zoom, qreal northbound, qreal eastbound, qreal southbound, qreal westbound);
+  void setMapNumber(const QString& str) { hdrTre.setMapId(str); }
 
-    void setMapNumber(const QString& str)
-    {
-        hdrTre.setMapId(str);
-    }
+  QList<CMapLevel>& maplevels() { return tre1.maplevels(); }
 
-    QList<CMapLevel>& maplevels()
-    {
-        return tre1.maplevels();
-    }
+  CSubdiv& subdivByNumber(CSubdiv::number_t number);
 
-    CSubdiv& subdivByNumber(CSubdiv::number_t number);
+ private:
+  quint32 mapId = 0;
 
+  CHdrTre hdrTre;
+  CTre1 tre1;
+  CTre2 tre2;
+  CTre3 tre3;
+  CSection tre4;
+  CSection tre5;
+  CSection tre6;
+  CTre7 tre7;
+  CTre8 tre8;
+  CSection tre9;
+  CSection tre10;
 
+  qreal northbound_ = -90;
+  qreal eastbound_ = -180;
+  qreal southbound_ = 90;
+  qreal westbound_ = 180;
 
-private:
-    quint32 mapId = 0;
-
-    CHdrTre hdrTre;
-    CTre1 tre1;
-    CTre2 tre2;
-    CTre3 tre3;
-    CSection tre4;
-    CSection tre5;
-    CSection tre6;
-    CTre7 tre7;
-    CTre8 tre8;
-    CSection tre9;
-    CSection tre10;
-
-    qreal northbound_ = -90;
-    qreal eastbound_ = -180;
-    qreal southbound_ = 90;
-    qreal westbound_ = 180;
-
-    quint16 cntSubdiv_ = 0;
+  quint16 cntSubdiv_ = 0;
 };
-
-

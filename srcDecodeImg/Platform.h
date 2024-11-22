@@ -117,43 +117,29 @@ source)" which is faster.
 #define gar_endian(t, x) (__gar_endian_##t(x))
 
 // define swapping
-static inline uint16_t __gar_endian_uint16_t(uint16_t x) {
-  return ((x >> 8) & 0xffu) | ((x & 0xffu) << 8);
-}
+static inline uint16_t __gar_endian_uint16_t(uint16_t x) { return ((x >> 8) & 0xffu) | ((x & 0xffu) << 8); }
 
 static inline uint32_t __gar_endian_uint32_t(uint32_t x) {
-  return ((x & 0xff000000u) >> 24) | ((x & 0x00ff0000u) >> 8) |
-         ((x & 0x0000ff00u) << 8) | ((x & 0x000000ffu) << 24);
+  return ((x & 0xff000000u) >> 24) | ((x & 0x00ff0000u) >> 8) | ((x & 0x0000ff00u) << 8) | ((x & 0x000000ffu) << 24);
 }
 
 static inline uint64_t __gar_endian_uint64_t(uint64_t x) {
-  return ((x & 0xff00000000000000ull) >> 56) |
-         ((x & 0x00ff000000000000ull) >> 40) |
-         ((x & 0x0000ff0000000000ull) >> 24) |
-         ((x & 0x000000ff00000000ull) >> 8) |
-         ((x & 0x00000000ff000000ull) << 8) |
-         ((x & 0x0000000000ff0000ull) << 24) |
-         ((x & 0x000000000000ff00ull) << 40) |
+  return ((x & 0xff00000000000000ull) >> 56) | ((x & 0x00ff000000000000ull) >> 40) |
+         ((x & 0x0000ff0000000000ull) >> 24) | ((x & 0x000000ff00000000ull) >> 8) | ((x & 0x00000000ff000000ull) << 8) |
+         ((x & 0x0000000000ff0000ull) << 24) | ((x & 0x000000000000ff00ull) << 40) |
          ((x & 0x00000000000000ffull) << 56);
 }
 
-static inline int16_t __gar_endian_int16_t(int16_t x) {
-  return ((x >> 8) & 0xffu) | ((x & 0xffu) << 8);
-}
+static inline int16_t __gar_endian_int16_t(int16_t x) { return ((x >> 8) & 0xffu) | ((x & 0xffu) << 8); }
 
 static inline int32_t __gar_endian_int32_t(int32_t x) {
-  return ((x & 0xff000000u) >> 24) | ((x & 0x00ff0000u) >> 8) |
-         ((x & 0x0000ff00u) << 8) | ((x & 0x000000ffu) << 24);
+  return ((x & 0xff000000u) >> 24) | ((x & 0x00ff0000u) >> 8) | ((x & 0x0000ff00u) << 8) | ((x & 0x000000ffu) << 24);
 }
 
 static inline int64_t __gar_endian_int64_t(int64_t x) {
-  return ((x & 0xff00000000000000ull) >> 56) |
-         ((x & 0x00ff000000000000ull) >> 40) |
-         ((x & 0x0000ff0000000000ull) >> 24) |
-         ((x & 0x000000ff00000000ull) >> 8) |
-         ((x & 0x00000000ff000000ull) << 8) |
-         ((x & 0x0000000000ff0000ull) << 24) |
-         ((x & 0x000000000000ff00ull) << 40) |
+  return ((x & 0xff00000000000000ull) >> 56) | ((x & 0x00ff000000000000ull) >> 40) |
+         ((x & 0x0000ff0000000000ull) >> 24) | ((x & 0x000000ff00000000ull) >> 8) | ((x & 0x00000000ff000000ull) << 8) |
+         ((x & 0x0000000000ff0000ull) << 24) | ((x & 0x000000000000ff00ull) << 40) |
          ((x & 0x00000000000000ffull) << 56);
 }
 
@@ -276,8 +262,7 @@ static inline uint32_t __gar_ptr_load_uint32_t(const uint8_t *p) {
 }
 
 static inline uint64_t __gar_ptr_load_uint64_t(const uint8_t *p) {
-  return (uint64_t)__gar_ptr_load_uint32_t(p) |
-         ((uint64_t)__gar_ptr_load_uint32_t(p + 4) << 32);
+  return (uint64_t)__gar_ptr_load_uint32_t(p) | ((uint64_t)__gar_ptr_load_uint32_t(p + 4) << 32);
 }
 
 static inline int16_t __gar_ptr_load_int16_t(const uint8_t *p) {
@@ -315,8 +300,7 @@ static inline int32_t __gar_ptr_load_int32_t(const uint8_t *p) {
 }
 
 static inline int64_t __gar_ptr_load_int64_t(const uint8_t *p) {
-  return (int64_t)__gar_ptr_load_uint32_t(p) |
-         ((int64_t)__gar_ptr_load_int32_t(p + 4) << 32);
+  return (int64_t)__gar_ptr_load_uint32_t(p) | ((int64_t)__gar_ptr_load_int32_t(p + 4) << 32);
 }
 
 static inline float __gar_ptr_load_float(const uint8_t *p) {
@@ -363,14 +347,10 @@ static inline void __gar_ptr_store_uint64_t(uint8_t *p, uint64_t src) {
   __gar_ptr_store_uint32_t(p + 4, src >> 32);
 }
 
-#define __gar_ptr_store_int16_t(p, src) \
-  __gar_ptr_store_uint16_t(p, (uint16_t)src)
-#define __gar_ptr_store_int24_t(p, src) \
-  __gar_ptr_store_uint24_t(p, (uint32_t)src)
-#define __gar_ptr_store_int32_t(p, src) \
-  __gar_ptr_store_uint32_t(p, (uint32_t)src)
-#define __gar_ptr_store_int64_t(p, src) \
-  __gar_ptr_store_uint64_t(p, (uint64_t)src)
+#define __gar_ptr_store_int16_t(p, src) __gar_ptr_store_uint16_t(p, (uint16_t)src)
+#define __gar_ptr_store_int24_t(p, src) __gar_ptr_store_uint24_t(p, (uint32_t)src)
+#define __gar_ptr_store_int32_t(p, src) __gar_ptr_store_uint32_t(p, (uint32_t)src)
+#define __gar_ptr_store_int64_t(p, src) __gar_ptr_store_uint64_t(p, (uint64_t)src)
 
 static inline void __gar_ptr_store_float(uint8_t *p, float src) {
   float __fv = gar_endian(float, src);

@@ -18,14 +18,10 @@
 
 #include "sections/CRgn2.h"
 
-CRgn2::CRgn2()
-{
+CRgn2::CRgn2() {}
 
-}
-
-quint32 CRgn2::addPolygons2(const QByteArray& polygons)
-{
-    quint32 off = data_.size();
-    data_ += polygons;
-    return off;
+quint32 CRgn2::addPolygons2(const QByteArray& polygons) {
+  quint32 off = data_.size();
+  data_ += polygons;
+  return off;
 }

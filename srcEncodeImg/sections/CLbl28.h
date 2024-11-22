@@ -19,16 +19,13 @@
 
 #include "sections/ISection.h"
 
-class CLbl28 : public ISection
-{
-public:
-    CLbl28();
-    virtual ~CLbl28() = default;
+class CLbl28 : public ISection {
+ public:
+  CLbl28();
+  virtual ~CLbl28() = default;
 
-    quint32 add(quint32 offset);
+  quint32 add(quint32 offset);
 
-private:
-    QDataStream out = {&data_, QIODevice::WriteOnly};
+ private:
+  QDataStream out = {&data_, QIODevice::WriteOnly};
 };
-
-

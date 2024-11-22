@@ -16,66 +16,55 @@
 
 **********************************************************************************************/
 
-#include "CException.h"
 #include "types/CFatBlock.h"
+
+#include "CException.h"
 
 quint32 CFatBlock::blocksize_ = 0;
 quint32 CFatBlock::blockcount_ = 0;
 
-CFatBlock::CFatBlock()
-{
-    memset(data_.name, 0x20, sizeof(data_.name));
-    memset(data_.type, 0x20, sizeof(data_.type));
-    memset(data_.blocks, 0xFF, sizeof(data_.blocks));
-    data_.part = 3;
+CFatBlock::CFatBlock() {
+  memset(data_.name, 0x20, sizeof(data_.name));
+  memset(data_.type, 0x20, sizeof(data_.type));
+  memset(data_.blocks, 0xFF, sizeof(data_.blocks));
+  data_.part = 3;
 }
 
-CFatBlock::CFatBlock(const QFileInfo& fileinfo)
-    : fileinfo_(fileinfo)
-{
-    memcpy(data_.name, fileinfo_.baseName().toUpper().toLatin1().data(), sizeof(data_.name));
-    memcpy(data_.type, fileinfo_.suffix().toUpper().toLatin1().data(), sizeof(data_.type));
-    memset(data_.blocks, 0xFF, sizeof(data_.blocks));
-    data_.size = quint32(fileinfo_.size());
+CFatBlock::CFatBlock(const QFileInfo& fileinfo) : fileinfo_(fileinfo) {
+  memcpy(data_.name, fileinfo_.baseName().toUpper().toLatin1().data(), sizeof(data_.name));
+  memcpy(data_.type, fileinfo_.suffix().toUpper().toLatin1().data(), sizeof(data_.type));
+  memset(data_.blocks, 0xFF, sizeof(data_.blocks));
+  data_.size = quint32(fileinfo_.size());
 }
 
-void CFatBlock::enumerate()
-{
-    const quint16 N = qCeil(qreal(data_.size) / blocksize_);
+void CFatBlock::enumerate() {
+  const quint16 N = qCeil(qreal(data_.size) / blocksize_);
 
-    Q_ASSERT_X(N < 240, "enumerate", "Data does not fit into one FAT block.");
+  Q_ASSERT_X(N < 240, "enumerate", "Data does not fit into one FAT block.");
 
-    for(quint16 n = 0; n < N; n++)
-    {
-        data_.blocks[n] = blockcount_++;
-    }
+  for (quint16 n = 0; n < N; n++) {
+    data_.blocks[n] = blockcount_++;
+  }
 }
 
-void CFatBlock::writeBlock(QFile& file)
-{
-    file.write((const char*)&data_,  sizeof(data_));
-}
+void CFatBlock::writeBlock(QFile& file) { file.write((const char*)&data_, sizeof(data_)); }
 
-void CFatBlock::writeData(QFile& file)
-{
-    file.seek(data_.blocks[0] * blocksize_);
+void CFatBlock::writeData(QFile& file) {
+  file.seek(data_.blocks[0] * blocksize_);
 
-    if(!fileinfo_.isFile())
-    {
-        return;
-    }
+  if (!fileinfo_.isFile()) {
+    return;
+  }
 
-    const QString& filename = fileinfo_.absoluteFilePath();
-    if(filename.isEmpty())
-    {
-        return;
-    }
+  const QString& filename = fileinfo_.absoluteFilePath();
+  if (filename.isEmpty()) {
+    return;
+  }
 
-    QFile source(filename);
-    if(!source.open(QIODevice::ReadOnly))
-    {
-        throw CException("Failed to open file "  + source.fileName());
-    }
+  QFile source(filename);
+  if (!source.open(QIODevice::ReadOnly)) {
+    throw CException("Failed to open file " + source.fileName());
+  }
 
-    file.write(source.readAll());
+  file.write(source.readAll());
 }

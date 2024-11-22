@@ -17,50 +17,43 @@
 **********************************************************************************************/
 #pragma once
 
-#include <limits>
 #include <QPointF>
 #include <QtCore>
+#include <limits>
 
 using mapunit_t = qint32;
 
-inline mapunit_t degToMapUnit(qreal deg)
-{
-    constexpr qreal DELTA = 360.0 / (1 << 24) / 2;
-    if (deg > 0)
-    {
-        return (int) ((deg + DELTA) * (1 << 24) / 360);
-    }
-    else
-    {
-        return (int) ((deg - DELTA) * (1 << 24) / 360);
-    }
+inline mapunit_t degToMapUnit(qreal deg) {
+  constexpr qreal DELTA = 360.0 / (1 << 24) / 2;
+  if (deg > 0) {
+    return (int)((deg + DELTA) * (1 << 24) / 360);
+  } else {
+    return (int)((deg - DELTA) * (1 << 24) / 360);
+  }
 }
 
-class CCoord
-{
-public:
-    CCoord(){}
-    CCoord(const QPointF& pt)
-    {
-        lat = degToMapUnit(pt.y());
-        lon = degToMapUnit(pt.x());
-    }
-    ~CCoord() = default;
+class CCoord {
+ public:
+  CCoord() {}
+  CCoord(const QPointF& pt) {
+    lat = degToMapUnit(pt.y());
+    lon = degToMapUnit(pt.x());
+  }
+  ~CCoord() = default;
 
-    const QPointF& operator=(const QPointF& pt)
-    {
-        lat = degToMapUnit(pt.y());
-        lon = degToMapUnit(pt.x());
-        return pt;
-    }
+  const QPointF& operator=(const QPointF& pt) {
+    lat = degToMapUnit(pt.y());
+    lon = degToMapUnit(pt.x());
+    return pt;
+  }
 
-    qint32 getId() const {return 0;}
-    bool isNumberNode() const {return false;}
+  qint32 getId() const { return 0; }
+  bool isNumberNode() const { return false; }
 
-    mapunit_t getLatitude() const {return lat;}
-    mapunit_t getLongitude() const {return lon;}
+  mapunit_t getLatitude() const { return lat; }
+  mapunit_t getLongitude() const { return lon; }
 
-private:
-    mapunit_t lat = 0;
-    mapunit_t lon = 0;
+ private:
+  mapunit_t lat = 0;
+  mapunit_t lon = 0;
 };

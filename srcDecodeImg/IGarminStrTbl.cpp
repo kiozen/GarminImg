@@ -20,8 +20,7 @@
 
 #include <QtCore>
 
-IGarminStrTbl::IGarminStrTbl(const quint16 codepage, const quint8 mask,
-                             QObject* parent)
+IGarminStrTbl::IGarminStrTbl(const quint16 codepage, const quint8 mask, QObject* parent)
     : QObject(parent), codepage(codepage), mask(mask) {
   if (codepage != 0) {
     if (1250 <= codepage && codepage <= 1258) {
@@ -35,8 +34,7 @@ IGarminStrTbl::IGarminStrTbl(const quint16 codepage, const quint8 mask,
     } else if (codepage == 65001) {
       codec = QTextCodec::codecForName("UTF-8");
     } else {
-      qDebug() << "unknown codepage:" << codepage << "0x" << Qt::hex
-               << codepage;
+      qDebug() << "unknown codepage:" << codepage << "0x" << Qt::hex << codepage;
       codec = QTextCodec::codecForName("Latin1");
     }
   }
@@ -56,8 +54,7 @@ IGarminStrTbl::IGarminStrTbl(const quint16 codepage, const quint8 mask,
 
 IGarminStrTbl::~IGarminStrTbl() {}
 
-void IGarminStrTbl::readFile(QFile& file, quint32 offset, quint32 size,
-                             QByteArray& data) {
+void IGarminStrTbl::readFile(QFile& file, quint32 offset, quint32 size, QByteArray& data) {
   if (offset + size > file.size()) {
     //         throw exce_t(eErrOpen, tr("Failed to read: ") + file.filename());
     return;
@@ -118,8 +115,7 @@ quint32 IGarminStrTbl::calcOffset(QFile& file, const quint32 offset, type_e t) {
   return newOffset;
 }
 
-QString IGarminStrTbl::processLabel(const char* buffer,
-                                    unsigned lastSeperator) {
+QString IGarminStrTbl::processLabel(const char* buffer, unsigned lastSeperator) {
   QString label;
   if (codepage != 0) {
     label = codec->toUnicode(buffer);

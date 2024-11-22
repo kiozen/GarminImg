@@ -38,8 +38,7 @@ class CGarminEncoder {
 
  private:
   void print(const char* format, ...);
-  void exportSubfileTile(quint32 xoff, quint32 yoff, quint32 xsize,
-                         quint32 ysize, const QString& filename,
+  void exportSubfileTile(quint32 xoff, quint32 yoff, quint32 xsize, quint32 ysize, const QString& filename,
                          const QString& subfileName);
   bool isSingleColor(const QImage& img);
   QMutex mutex;

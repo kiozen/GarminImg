@@ -18,75 +18,71 @@
 **********************************************************************************************/
 #pragma once
 
-#include "types/coords.h"
-#include "helpers/CBitWriter.h"
-
 #include <QVector>
+
+#include "helpers/CBitWriter.h"
+#include "types/coords.h"
 
 class CPolyline;
 class CSubdiv;
 
-class CLinePreparer
-{
-public:
-    CLinePreparer(const CPolyline &line, const CSubdiv &subdiv);
-    virtual ~CLinePreparer() = default;
+class CLinePreparer {
+ public:
+  CLinePreparer(const CPolyline& line, const CSubdiv& subdiv);
+  virtual ~CLinePreparer() = default;
 
-    /**
-     * Write the bit stream to a BitWriter and return it.
-     * Try different values for xBase and yBase to find the one
-     * that results in the shortest bit stream.
-     *
-     * @return A class containing the written byte stream.
-     */
-    CBitWriter makeShortestBitStream(qint32 minPointsRequired);
+  /**
+   * Write the bit stream to a BitWriter and return it.
+   * Try different values for xBase and yBase to find the one
+   * that results in the shortest bit stream.
+   *
+   * @return A class containing the written byte stream.
+   */
+  CBitWriter makeShortestBitStream(qint32 minPointsRequired);
 
-    /**
-     * Write the bit stream to a BitWriter and return it.
-     *
-     * @return A class containing the written byte stream.
-     */
-    CBitWriter makeBitStream(qint32 minPointsRequired, qint32 xb, qint32 yb);
+  /**
+   * Write the bit stream to a BitWriter and return it.
+   *
+   * @return A class containing the written byte stream.
+   */
+  CBitWriter makeBitStream(qint32 minPointsRequired, qint32 xb, qint32 yb);
 
-private:
-    /**
-     * Calculate the deltas of one point to the other.  While we are doing
-     * this we must save more information about the maximum sizes, if they
-     * are all the same sign etc.  This must be done separately for both
-     * the lat and long values.
-     */
-    void calcDeltas();
-    /**
-     * The bits needed to hold a number without truncating it.
-     *
-     * @param val The number for bit counting.
-     * @return The number of bits required.
-     */
-    qint32 bitsNeeded(mapunit_t val);
-    qint32 bits2Base(qint32 bits);
-    qint32 base2Bits(qint32 base);
+ private:
+  /**
+   * Calculate the deltas of one point to the other.  While we are doing
+   * this we must save more information about the maximum sizes, if they
+   * are all the same sign etc.  This must be done separately for both
+   * the lat and long values.
+   */
+  void calcDeltas();
+  /**
+   * The bits needed to hold a number without truncating it.
+   *
+   * @param val The number for bit counting.
+   * @return The number of bits required.
+   */
+  qint32 bitsNeeded(mapunit_t val);
+  qint32 bits2Base(qint32 bits);
+  qint32 base2Bits(qint32 base);
 
+  const CPolyline& polyline;
+  const CSubdiv& subdiv;
 
-    const CPolyline& polyline;
-    const CSubdiv& subdiv;
+  bool extraBit = false;
+  bool ignoreNumberOnlyNodes = true;
+  bool extTypeLine = false;
 
-    bool extraBit = false;
-    bool ignoreNumberOnlyNodes = true;
-    bool extTypeLine = false;
+  bool xSameSign = true;
+  bool xSignNegative = false;  // Set if all negative
 
-    bool xSameSign = true;
-    bool xSignNegative = false;     // Set if all negative
+  bool ySameSign = true;
+  bool ySignNegative = false;  // Set if all negative
 
-    bool ySameSign = true;
-    bool ySignNegative = false;     // Set if all negative
+  // The base number of bits
+  qint32 xBase = 0;
+  qint32 yBase = 0;
 
-    // The base number of bits
-    qint32 xBase = 0;
-    qint32 yBase = 0;
-
-    // The delta changes between the points.
-    QVector<mapunit_t> deltas;
-    QVector<bool> nodes;
+  // The delta changes between the points.
+  QVector<mapunit_t> deltas;
+  QVector<bool> nodes;
 };
-
-

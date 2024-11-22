@@ -16,49 +16,42 @@
 
 **********************************************************************************************/
 
-#include "CException.h"
 #include "headers/IHdrSubfile.h"
 
-IHdrSubfile::IHdrSubfile(quint16 size, const QString& typeSpecifier)
-{
-    common_.size = size;
+#include "CException.h"
 
-    Q_ASSERT_X(typeSpecifier.size() == 3, "typeSpecifier", "Size of typeSpecifier must be 3");
-    const QString& t = QString("GARMIN %1").arg(typeSpecifier);
-    strncpy(common_.type, t.toLatin1().data(), sizeof(common_.type));
+IHdrSubfile::IHdrSubfile(quint16 size, const QString& typeSpecifier) {
+  common_.size = size;
 
-    const QDateTime& timestamp = QDateTime::currentDateTimeUtc();
-    const QDate& date = timestamp.date();
-    const QTime& time = timestamp.time();
-    common_.year = date.year();
-    common_.month = date.month();
-    common_.day = date.day();
-    common_.hour = time.hour();
-    common_.minute = time.minute();
-    common_.second = time.second();
+  Q_ASSERT_X(typeSpecifier.size() == 3, "typeSpecifier", "Size of typeSpecifier must be 3");
+  const QString& t = QString("GARMIN %1").arg(typeSpecifier);
+  strncpy(common_.type, t.toLatin1().data(), sizeof(common_.type));
+
+  const QDateTime& timestamp = QDateTime::currentDateTimeUtc();
+  const QDate& date = timestamp.date();
+  const QTime& time = timestamp.time();
+  common_.year = date.year();
+  common_.month = date.month();
+  common_.day = date.day();
+  common_.hour = time.hour();
+  common_.minute = time.minute();
+  common_.second = time.second();
 }
 
-void IHdrSubfile::write(QFile &file)
-{
-    file.write((const char*)&common_,  sizeof(common_));
+void IHdrSubfile::write(QFile& file) { file.write((const char*)&common_, sizeof(common_)); }
+
+quint32 IHdrSubfile::offset() const {
+  if (offset_ & 0xFFFFFFFF00000000LL) {
+    throw CException("Offset of header exceeds 32 bit");
+  }
+
+  return offset_;
 }
 
-quint32 IHdrSubfile::offset() const
-{
-    if(offset_ & 0xFFFFFFFF00000000LL)
-    {
-        throw CException("Offset of header exceeds 32 bit");
-    }
+quint32 IHdrSubfile::size() const {
+  if (size_ & 0xFFFFFFFF00000000LL) {
+    throw CException("Size of header exceeds 32 bit");
+  }
 
-    return offset_;
-}
-
-quint32 IHdrSubfile::size() const
-{
-    if(size_ & 0xFFFFFFFF00000000LL)
-    {
-        throw CException("Size of header exceeds 32 bit");
-    }
-
-    return size_;
+  return size_;
 }

@@ -18,14 +18,10 @@
 
 #include "CRgn4.h"
 
-CRgn4::CRgn4()
-{
+CRgn4::CRgn4() {}
 
-}
-
-quint32 CRgn4::addPoints2(const QByteArray& points)
-{
-    quint32 off = data_.size();
-    data_ += points;
-    return off;
+quint32 CRgn4::addPoints2(const QByteArray& points) {
+  quint32 off = data_.size();
+  data_ += points;
+  return off;
 }

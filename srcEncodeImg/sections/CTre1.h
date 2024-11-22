@@ -17,26 +17,22 @@
 **********************************************************************************************/
 #pragma once
 
-#include "types/CMapLevel.h"
 #include "sections/ISection.h"
+#include "types/CMapLevel.h"
 
 /** Table of map levels.
 
  */
-class CTre1 : public ISection
-{
-public:
-    CTre1();
-    virtual ~CTre1() = default;
+class CTre1 : public ISection {
+ public:
+  CTre1();
+  virtual ~CTre1() = default;
 
-    CMapLevel& maplevel(quint8 zoom);
-    void write(QFile& file) override;
+  CMapLevel& maplevel(quint8 zoom);
+  void write(QFile& file) override;
 
-    QList<CMapLevel>& maplevels()
-    {
-        return maplevels_;
-    }
+  QList<CMapLevel>& maplevels() { return maplevels_; }
 
-private:
-    QList<CMapLevel> maplevels_;
+ private:
+  QList<CMapLevel> maplevels_;
 };

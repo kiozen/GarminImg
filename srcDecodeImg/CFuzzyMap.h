@@ -22,65 +22,47 @@
 
 extern double MIN_DELTA;
 
-inline bool operator<(const QPointF& p1, const QPointF& p2)
-{
-    if(p1.x() < p2.x())
-    {
-        return true;
-    }
-    if(p1.x() == p2.x())
-    {
-        return p1.y() < p2.y();
-    }
+inline bool operator<(const QPointF& p1, const QPointF& p2) {
+  if (p1.x() < p2.x()) {
+    return true;
+  }
+  if (p1.x() == p2.x()) {
+    return p1.y() < p2.y();
+  }
 
-    return false;
+  return false;
 }
 
 template <typename T>
-class CFuzzyMap
-{
-public:
-    CFuzzyMap<T>(){}
-    virtual ~CFuzzyMap() = default;
+class CFuzzyMap {
+ public:
+  CFuzzyMap<T>() {}
+  virtual ~CFuzzyMap() = default;
 
-    bool contains(const QPointF& p) const
-    {
-        for(const QPointF& key : map.keys())
-        {
-            if((key - p).manhattanLength() < MIN_DELTA)
-            {
-                return true;
-            }
-        }
-        return false;
+  bool contains(const QPointF& p) const {
+    for (const QPointF& key : map.keys()) {
+      if ((key - p).manhattanLength() < MIN_DELTA) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  T& operator[](const QPointF& p) {
+    for (const QPointF& key : map.keys()) {
+      if ((key - p).manhattanLength() < MIN_DELTA) {
+        return map[key];
+      }
     }
 
-    T& operator[](const QPointF& p)
-    {
-        for(const QPointF& key : map.keys())
-        {
-            if((key - p).manhattanLength() < MIN_DELTA)
-            {
-                return map[key];
-            }
-        }
+    map[p] = T();
+    return map[p];
+  }
 
-        map[p] = T();
-        return map[p];
-    }
+  QList<QPointF> keys() const { return map.keys(); }
 
-    QList<QPointF> keys() const
-    {
-        return map.keys();
-    }
+  int size() const { return map.size(); }
 
-    int size() const
-    {
-        return map.size();
-    }
-
-private:
-    QMap<QPointF, T> map;
+ private:
+  QMap<QPointF, T> map;
 };
-
-

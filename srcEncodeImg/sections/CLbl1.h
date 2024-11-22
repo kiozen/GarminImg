@@ -19,13 +19,10 @@
 
 #include "sections/ISection.h"
 
-class CLbl1 : public ISection
-{
-public:
-    CLbl1();
-    virtual ~CLbl1() = default;
+class CLbl1 : public ISection {
+ public:
+  CLbl1();
+  virtual ~CLbl1() = default;
 
-    quint32 add(const QString& str);
+  quint32 add(const QString& str);
 };
-
-

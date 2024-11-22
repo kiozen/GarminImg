@@ -18,15 +18,10 @@
 
 #include "sections/CTre3.h"
 
-CTre3::CTre3()
-{
-    sizeRecord_ = 3;
-}
+CTre3::CTre3() { sizeRecord_ = 3; }
 
-void CTre3::add(quint32 lbl1Offset)
-{
-    data_.append(lbl1Offset & 0x0FF);
-    data_.append((lbl1Offset >> 8) & 0x0FF);
-    data_.append((lbl1Offset >> 16) & 0x0FF);
+void CTre3::add(quint32 lbl1Offset) {
+  data_.append(lbl1Offset & 0x0FF);
+  data_.append((lbl1Offset >> 8) & 0x0FF);
+  data_.append((lbl1Offset >> 16) & 0x0FF);
 }
-

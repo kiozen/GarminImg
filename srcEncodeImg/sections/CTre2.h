@@ -17,8 +17,8 @@
 **********************************************************************************************/
 #pragma once
 
-#include "types/CSubdiv.h"
 #include "sections/ISection.h"
+#include "types/CSubdiv.h"
 
 class CSubdiv;
 
@@ -32,11 +32,10 @@ class CSubdiv;
   of the maplevels.
 
  */
-class CTre2 : public ISection
-{
-public:
-    CTre2();
-    virtual ~CTre2() = default;
+class CTre2 : public ISection {
+ public:
+  CTre2();
+  virtual ~CTre2() = default;
 
-    void addSubdiv(const CSubdiv& subdiv);
+  void addSubdiv(const CSubdiv& subdiv);
 };

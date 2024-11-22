@@ -21,9 +21,7 @@
 #include <QDebug>
 #include <QPolygonF>
 
-CProj::CProj(const QString& crsSrc, const QString& crsTar) {
-  init(crsSrc.toLatin1(), crsTar.toLatin1());
-}
+CProj::CProj(const QString& crsSrc, const QString& crsTar) { init(crsSrc.toLatin1(), crsTar.toLatin1()); }
 
 CProj::~CProj() {
   if (nullptr != _pj) {
@@ -64,8 +62,7 @@ void CProj::init(const char* crsSrc, const char* crsTar) {
     qWarning() << "Failed to create projection constex:";
     return;
   }
-  _pj = proj_create_crs_to_crs(_ctx, _strProjSrc.toLatin1(),
-                               _strProjTar.toLatin1(), NULL);
+  _pj = proj_create_crs_to_crs(_ctx, _strProjSrc.toLatin1(), _strProjTar.toLatin1(), NULL);
   if (nullptr != _pj) {
     PJ* P_for_GIS = proj_normalize_for_visualization(_ctx, _pj);
     proj_destroy(_pj);
@@ -76,8 +73,7 @@ void CProj::init(const char* crsSrc, const char* crsTar) {
   _isTarLatLong = _isLatLong(_strProjTar);
 
   if (nullptr == _pj) {
-    qWarning() << "Failed to create projection:" << _strProjSrc << "->"
-               << _strProjTar;
+    qWarning() << "Failed to create projection:" << _strProjSrc << "->" << _strProjTar;
     return;
   }
 
@@ -148,8 +144,7 @@ void CProj::_transform(qreal& lon, qreal& lat, PJ_DIRECTION dir) const {
   lat = c.uv.v;
 }
 
-bool CProj::validProjStr(const QString projStr, bool allowLonLatToo,
-                         fErrMessage errMessage) {
+bool CProj::validProjStr(const QString projStr, bool allowLonLatToo, fErrMessage errMessage) {
   bool res = false;
 
   PJ* projCheck = proj_create(PJ_DEFAULT_CTX, projStr.toLatin1());
@@ -157,8 +152,7 @@ bool CProj::validProjStr(const QString projStr, bool allowLonLatToo,
     if (errMessage) {
       errMessage(tr("The value\n'%1'\nis not a valid coordinate system "
                     "definition:\n%2")
-                     .arg(projStr, proj_errno_string(
-                                       proj_context_errno(PJ_DEFAULT_CTX))));
+                     .arg(projStr, proj_errno_string(proj_context_errno(PJ_DEFAULT_CTX))));
     }
   } else {
     PJ_TYPE type = proj_get_type(projCheck);

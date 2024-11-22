@@ -17,28 +17,25 @@
 **********************************************************************************************/
 #pragma once
 
-#include "types/CFatBlock.h"
-#include "headers/CHdrGmapsupp.h"
-
 #include <QtCore>
 
-class CFileImg
-{
-public:
-    CFileImg();
-    virtual ~CFileImg() = default;
+#include "headers/CHdrGmapsupp.h"
+#include "types/CFatBlock.h"
 
-    void setDescription(const QString& str){hdr.setDescription(str);}
+class CFileImg {
+ public:
+  CFileImg();
+  virtual ~CFileImg() = default;
 
-    CFileImg& operator<<(const QFileInfo& info);
-    quint32 hash() const {return hdr.hash();}
+  void setDescription(const QString& str) { hdr.setDescription(str); }
 
-    void finalize();
-    void write(QFile& file);
+  CFileImg& operator<<(const QFileInfo& info);
+  quint32 hash() const { return hdr.hash(); }
 
-private:    
-    CHdrGmapsupp hdr;
-    QList<CFatBlock> blocks;
+  void finalize();
+  void write(QFile& file);
+
+ private:
+  CHdrGmapsupp hdr;
+  QList<CFatBlock> blocks;
 };
-
-

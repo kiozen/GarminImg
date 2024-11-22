@@ -17,22 +17,19 @@
 **********************************************************************************************/
 #pragma once
 
-#include "items/IItem.h"
 #include <QPolygonF>
 
+#include "items/IItem.h"
 
-class CPolyline : public QPolygonF, public IItem
-{
-public:
-    CPolyline(quint32 type);
-    virtual ~CPolyline() = default;
+class CPolyline : public QPolygonF, public IItem {
+ public:
+  CPolyline(quint32 type);
+  virtual ~CPolyline() = default;
 
-    bool isRoad() const {return false;}
-    bool hasInternalNodes() const {return false;}
-    bool isLastSegment() const {return true;}
-    bool hasHouseNumbers() const {return false;}
+  bool isRoad() const { return false; }
+  bool hasInternalNodes() const { return false; }
+  bool isLastSegment() const { return true; }
+  bool hasHouseNumbers() const { return false; }
 
-    bool isPolygon() const {return false;}
+  bool isPolygon() const { return false; }
 };
-
-

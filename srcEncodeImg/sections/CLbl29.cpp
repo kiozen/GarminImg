@@ -16,27 +16,24 @@
 
 **********************************************************************************************/
 
-#include "CException.h"
 #include "sections/CLbl29.h"
 
-CLbl29::CLbl29()
-{
-}
+#include "CException.h"
 
-std::tuple<quint32, quint32> CLbl29::add(const QString &path)
-{
-    quint32 offset = data_.size();
+CLbl29::CLbl29() {}
 
-    QFile tile(path);
-    if(!tile.open(QIODevice::ReadOnly))
-    {
-        throw CException("Failed to create: " + tile.fileName());
-    }
+std::tuple<quint32, quint32> CLbl29::add(const QString& path) {
+  quint32 offset = data_.size();
 
-    const QByteArray& jpeg = tile.readAll();
+  QFile tile(path);
+  if (!tile.open(QIODevice::ReadOnly)) {
+    throw CException("Failed to create: " + tile.fileName());
+  }
 
-    data_.append(jpeg);
-    tile.close();
+  const QByteArray& jpeg = tile.readAll();
 
-    return {offset, tile.size()};
+  data_.append(jpeg);
+  tile.close();
+
+  return {offset, tile.size()};
 }

@@ -33,8 +33,7 @@
 
 extern QCommandLineParser allArgs;
 
-static const char* gtiffArgs[] = {"COMPRESS=JPEG", "TILED=YES",
-                                  "BLOCKXSIZE=1024", "BLOCKYSIZE=1024", NULL};
+static const char* gtiffArgs[] = {"COMPRESS=JPEG", "TILED=YES", "BLOCKXSIZE=1024", "BLOCKYSIZE=1024", NULL};
 
 static void minno(hdr_tre_t* trehdr, QByteArray& data) {
   if (trehdr->flag & 0x80) {
@@ -68,8 +67,7 @@ static void minno(hdr_tre_t* trehdr, QByteArray& data) {
   }
 }
 
-CGarminDecoder::CGarminDecoder(const QString& filename)
-    : filename(filename), basename(QFileInfo(filename).baseName()) {
+CGarminDecoder::CGarminDecoder(const QString& filename) : filename(filename), basename(QFileInfo(filename).baseName()) {
   drvman = GetGDALDriverManager();
   driver = drvman->GetDriverByName("GTiff");
 }
@@ -116,12 +114,10 @@ void CGarminDecoder::readFAT(QFile& file) {
     }
 
     char tmpstr[64] = {0};
-    memcpy(tmpstr, FATBlock.name,
-           sizeof(FATBlock.name) + sizeof(FATBlock.type));
+    memcpy(tmpstr, FATBlock.name, sizeof(FATBlock.name) + sizeof(FATBlock.type));
     tmpstr[sizeof(FATBlock.name) + sizeof(FATBlock.type)] = 0;
 
-    if (FATBlock.size != 0 &&
-        !subfiles.contains(tmpstr) /*&& tmpstr[0] != 0x20*/) {
+    if (FATBlock.size != 0 && !subfiles.contains(tmpstr) /*&& tmpstr[0] != 0x20*/) {
       subfile_t& subfile = subfiles[tmpstr];
       subfile.name = tmpstr;
 
@@ -132,8 +128,7 @@ void CGarminDecoder::readFAT(QFile& file) {
       part.size = FATBlock.size;
       part.offset = FATBlock.blocks[0] * blocksize;
 
-      print("%s %s %08X %08X %02X\n", subfile.name.toLatin1().data(), tmpstr,
-            part.offset, part.size, FATBlock.part);
+      print("%s %s %08X %08X %02X\n", subfile.name.toLatin1().data(), tmpstr, part.offset, part.size, FATBlock.part);
     }
 
     file.read((char*)&FATBlock, sizeof(FATBlock_t));
@@ -236,8 +231,7 @@ void CGarminDecoder::readProductInfo(QDataStream& stream) {
   quint16 idProd;
   quint16 idFamily;
   stream >> idProd >> idFamily;
-  print("Product Info: %i %i %s\n", idProd, idFamily,
-        readRawString(stream).toUtf8().data());
+  print("Product Info: %i %i %s\n", idProd, idFamily, readRawString(stream).toUtf8().data());
 }
 
 void CGarminDecoder::readMapInfo(QDataStream& stream) {
@@ -254,16 +248,14 @@ void CGarminDecoder::readMapInfo(QDataStream& stream) {
 
   stream >> mapId >> dummy;
 
-  print("Map Info: %i %i %i %s %s %s %08X %i \n", idProd, idFamily, mapNumber,
-        seriesName.toLocal8Bit().data(), mapDesc.toLocal8Bit().data(),
-        areaName.toLocal8Bit().data(), mapId, mapId);
+  print("Map Info: %i %i %i %s %s %s %08X %i \n", idProd, idFamily, mapNumber, seriesName.toLocal8Bit().data(),
+        mapDesc.toLocal8Bit().data(), areaName.toLocal8Bit().data(), mapId, mapId);
 }
 
 void CGarminDecoder::readGMP(QFile& file, subfile_t& subfile) {
   file.seek(subfile.parts["GMP"].offset);
 
-  print("--- GMP Header %s (%08X)---\n", subfile.name.toLatin1().data(),
-        (quint32)file.pos());
+  print("--- GMP Header %s (%08X)---\n", subfile.name.toLatin1().data(), (quint32)file.pos());
 
   gmp_hdr_t hdr;
   file.read((char*)&hdr, sizeof(hdr));
@@ -375,8 +367,7 @@ void CGarminDecoder::readSubdivInfo(QFile& file, subfile_t& subfile) {
     subdiv->n = l + 1;
     subdiv->next = pTre2N->next;
     subdiv->terminate = TRE_SUBDIV_TERM(pTre2N);
-    subdiv->rgn_start = pTre2N->rgn_offset[0] | pTre2N->rgn_offset[1] << 8 |
-                        pTre2N->rgn_offset[2] << 16;
+    subdiv->rgn_start = pTre2N->rgn_offset[0] | pTre2N->rgn_offset[1] << 8 | pTre2N->rgn_offset[2] << 16;
 
     // skip if this is the first entry
     if (subdiv_prev != subfile.subdivs.end()) {
@@ -399,11 +390,9 @@ void CGarminDecoder::readSubdivInfo(QFile& file, subfile_t& subfile) {
     subdiv->level = subdiv->maplevel->zoom;
     subdiv->shift = 24 - subdiv->maplevel->bits;
 
-    cx = pTre2N->center_lng[0] | pTre2N->center_lng[1] << 8 |
-         pTre2N->center_lng[2] << 16;
+    cx = pTre2N->center_lng[0] | pTre2N->center_lng[1] << 8 | pTre2N->center_lng[2] << 16;
     subdiv->iCenterLng = cx;
-    cy = pTre2N->center_lat[0] | pTre2N->center_lat[1] << 8 |
-         pTre2N->center_lat[2] << 16;
+    cy = pTre2N->center_lat[0] | pTre2N->center_lat[1] << 8 | pTre2N->center_lat[2] << 16;
     subdiv->iCenterLat = cy;
     width = TRE_SUBDIV_WIDTH(pTre2N) << subdiv->shift;
     height = pTre2N->height << subdiv->shift;
@@ -413,8 +402,7 @@ void CGarminDecoder::readSubdivInfo(QFile& file, subfile_t& subfile) {
     subdiv->east = GARMIN_RAD(cx + width + 1);
     subdiv->west = GARMIN_RAD(cx - width);
 
-    subdiv->area = QRectF(QPointF(subdiv->west, subdiv->north),
-                          QPointF(subdiv->east, subdiv->south));
+    subdiv->area = QRectF(QPointF(subdiv->west, subdiv->north), QPointF(subdiv->east, subdiv->south));
 
     subdiv_prev = subdiv;
     ++pTre2N;
@@ -433,8 +421,7 @@ void CGarminDecoder::readSubdivInfo(QFile& file, subfile_t& subfile) {
     subdiv->n = l + 1;
     subdiv->next = 0;
     subdiv->terminate = TRE_SUBDIV_TERM(pTre2L);
-    subdiv->rgn_start = pTre2L->rgn_offset[0] | pTre2L->rgn_offset[1] << 8 |
-                        pTre2L->rgn_offset[2] << 16;
+    subdiv->rgn_start = pTre2L->rgn_offset[0] | pTre2L->rgn_offset[1] << 8 | pTre2L->rgn_offset[2] << 16;
 
     subdiv_prev->rgn_end = subdiv->rgn_start;
 
@@ -446,11 +433,9 @@ void CGarminDecoder::readSubdivInfo(QFile& file, subfile_t& subfile) {
     subdiv->level = subdiv->maplevel->zoom;
     subdiv->shift = 24 - subdiv->maplevel->bits;
 
-    cx = pTre2L->center_lng[0] | pTre2L->center_lng[1] << 8 |
-         pTre2L->center_lng[2] << 16;
+    cx = pTre2L->center_lng[0] | pTre2L->center_lng[1] << 8 | pTre2L->center_lng[2] << 16;
     subdiv->iCenterLng = cx;
-    cy = pTre2L->center_lat[0] | pTre2L->center_lat[1] << 8 |
-         pTre2L->center_lat[2] << 16;
+    cy = pTre2L->center_lat[0] | pTre2L->center_lat[1] << 8 | pTre2L->center_lat[2] << 16;
     subdiv->iCenterLat = cy;
     width = TRE_SUBDIV_WIDTH(pTre2L) << subdiv->shift;
     height = pTre2L->height << subdiv->shift;
@@ -460,8 +445,7 @@ void CGarminDecoder::readSubdivInfo(QFile& file, subfile_t& subfile) {
     subdiv->east = GARMIN_RAD(cx + width + 1);
     subdiv->west = GARMIN_RAD(cx - width);
 
-    subdiv->area = QRectF(QPointF(subdiv->west, subdiv->north),
-                          QPointF(subdiv->east, subdiv->south));
+    subdiv->area = QRectF(QPointF(subdiv->west, subdiv->north), QPointF(subdiv->east, subdiv->south));
 
     subdiv_prev = subdiv;
     ++pTre2L;
@@ -474,17 +458,14 @@ void CGarminDecoder::readSubdivInfoExt(QFile& file, subfile_t& subfile) {
   file.seek(subfile.parts["GMP"].offset + subfile.hdrTRE.tre7_offset);
   // read offsets of 1st subdiv
   if (subfile.hdrTRE.tre7_rec_size >= 4) {
-    file.read((char*)&subfile.subdivs[0].offsetPolygons2,
-              sizeof(subdiv_t::offsetPolygons2));
+    file.read((char*)&subfile.subdivs[0].offsetPolygons2, sizeof(subdiv_t::offsetPolygons2));
   }
 
   if (subfile.hdrTRE.tre7_rec_size >= 8) {
-    file.read((char*)&subfile.subdivs[0].offsetPolylines2,
-              sizeof(subdiv_t::offsetPolylines2));
+    file.read((char*)&subfile.subdivs[0].offsetPolylines2, sizeof(subdiv_t::offsetPolylines2));
   }
   if (subfile.hdrTRE.tre7_rec_size >= 12) {
-    file.read((char*)&subfile.subdivs[0].offsetPoints2,
-              sizeof(subdiv_t::offsetPoints2));
+    file.read((char*)&subfile.subdivs[0].offsetPoints2, sizeof(subdiv_t::offsetPoints2));
   }
 
   const quint32 nSubdivs = subfile.subdivs.size();
@@ -494,14 +475,12 @@ void CGarminDecoder::readSubdivInfoExt(QFile& file, subfile_t& subfile) {
 
     // read offset of all other subdivs and calculate size of previous ones
     if (subfile.hdrTRE.tre7_rec_size >= 4) {
-      file.read((char*)&subdiv.offsetPolygons2,
-                sizeof(subdiv_t::offsetPolygons2));
+      file.read((char*)&subdiv.offsetPolygons2, sizeof(subdiv_t::offsetPolygons2));
       last.lengthPolygons2 = subdiv.offsetPolygons2 - last.offsetPolygons2;
     }
 
     if (subfile.hdrTRE.tre7_rec_size >= 8) {
-      file.read((char*)&subdiv.offsetPolylines2,
-                sizeof(subdiv_t::offsetPolylines2));
+      file.read((char*)&subdiv.offsetPolylines2, sizeof(subdiv_t::offsetPolylines2));
       last.lengthPolylines2 = subdiv.offsetPolylines2 - last.offsetPolylines2;
     }
     if (subfile.hdrTRE.tre7_rec_size >= 12) {
@@ -511,12 +490,9 @@ void CGarminDecoder::readSubdivInfoExt(QFile& file, subfile_t& subfile) {
   }
 
   // calculate size of previous ones
-  subfile.subdivs.last().lengthPolygons2 =
-      subfile.hdrRGN.length_polyg2 - subfile.subdivs.last().offsetPolygons2;
-  subfile.subdivs.last().lengthPolylines2 =
-      subfile.hdrRGN.length_polyl2 - subfile.subdivs.last().offsetPolylines2;
-  subfile.subdivs.last().lengthPoints2 =
-      subfile.hdrRGN.length_point2 - subfile.subdivs.last().offsetPoints2;
+  subfile.subdivs.last().lengthPolygons2 = subfile.hdrRGN.length_polyg2 - subfile.subdivs.last().offsetPolygons2;
+  subfile.subdivs.last().lengthPolylines2 = subfile.hdrRGN.length_polyl2 - subfile.subdivs.last().offsetPolylines2;
+  subfile.subdivs.last().lengthPoints2 = subfile.hdrRGN.length_point2 - subfile.subdivs.last().offsetPoints2;
 }
 
 void CGarminDecoder::readTre8(QFile& file, subfile_t& subfile) {
@@ -569,8 +545,7 @@ void CGarminDecoder::readStringTable(QFile& file, subfile_t& subfile) {
   }
 
   if (nullptr != subfile.strtbl) {
-    subfile.strtbl->registerLBL1(offsetLbl1, subfile.hdrLBL.lbl1_length,
-                                 subfile.hdrLBL.addr_shift);
+    subfile.strtbl->registerLBL1(offsetLbl1, subfile.hdrLBL.lbl1_length, subfile.hdrLBL.addr_shift);
     subfile.strtbl->registerLBL6(offsetLbl6, subfile.hdrLBL.lbl6_length);
   }
 }
@@ -612,21 +587,18 @@ void CGarminDecoder::analyse() {
           pData += tileEntry.decode(pData, pEnd);
 
           qDebug("--------   tile  --------");
-          qDebug() << tileEntry.index << tileEntry.lon1 << tileEntry.lat1
-                   << tileEntry.lon2 << tileEntry.lat2 << tileEntry.size;
+          qDebug() << tileEntry.index << tileEntry.lon1 << tileEntry.lat1 << tileEntry.lon2 << tileEntry.lat2
+                   << tileEntry.size;
         } else {
           CGarminPolygon polygonEntry;
-          int bytes = polygonEntry.decode2(subdiv.iCenterLng, subdiv.iCenterLat,
-                                           subdiv.shift, false, pData, pEnd);
+          int bytes = polygonEntry.decode2(subdiv.iCenterLng, subdiv.iCenterLat, subdiv.shift, false, pData, pEnd);
 
           if (subfile.strtbl) {
-            subfile.strtbl->get(file, polygonEntry.lbl_info,
-                                IGarminStrTbl::norm, polygonEntry.labels);
+            subfile.strtbl->get(file, polygonEntry.lbl_info, IGarminStrTbl::norm, polygonEntry.labels);
           }
 
           qDebug("\n-------- polygon --------");
-          qDebug() << "lbl_in_NET" << polygonEntry.lbl_in_NET << "hasV2Label"
-                   << polygonEntry.hasV2Label << "lbl_info"
+          qDebug() << "lbl_in_NET" << polygonEntry.lbl_in_NET << "hasV2Label" << polygonEntry.hasV2Label << "lbl_info"
                    << polygonEntry.lbl_info << polygonEntry.labels;
           qDebug() << polygonEntry.type << polygonEntry.points;
 
@@ -665,8 +637,7 @@ void CGarminDecoder::dumpSubfiles() {
     if (numThreads == 1) {
       processSubfile(subfile);
     } else {
-      CSubfileTask* task =
-          new CSubfileTask([this, &subfile]() { processSubfile(subfile); });
+      CSubfileTask* task = new CSubfileTask([this, &subfile]() { processSubfile(subfile); });
 
       QThreadPool::globalInstance()->start(task);
     }
@@ -687,8 +658,7 @@ void CGarminDecoder::processSubfile(const subfile_t& subfile) {
 
   int nTiles = subfile.hdrLBL.lbl28_length / subfile.hdrLBL.lbl28_rec_size;
 
-  printf("Process %s: number of tiles %i in LBL29\n",
-         subfile.name.toUtf8().data(), nTiles);
+  printf("Process %s: number of tiles %i in LBL29\n", subfile.name.toUtf8().data(), nTiles);
 
   QVector<tile_t> tiles(nTiles);
   file.seek(subfile.parts["GMP"].offset + subfile.hdrRGN.offset_polyg2);
@@ -697,8 +667,7 @@ void CGarminDecoder::processSubfile(const subfile_t& subfile) {
   QByteArray dataLbl28 = file.read(subfile.hdrLBL.lbl28_length);
   quint32* jpgOffsets = (quint32*)dataLbl28.data();
 
-  print(">>> %08X %08X %08X\n", subfile.parts["GMP"].offset,
-        subfile.hdrLBL.lbl28_offset,
+  print(">>> %08X %08X %08X\n", subfile.parts["GMP"].offset, subfile.hdrLBL.lbl28_offset,
         subfile.parts["GMP"].offset + subfile.hdrLBL.lbl28_offset);
 
   quint8* pData = (quint8*)dataRgnPolyg2.data();
@@ -723,8 +692,7 @@ void CGarminDecoder::processSubfile(const subfile_t& subfile) {
       // Load the tile and all it's information
       tile_t& tile = tiles[tileEntry.index];
       quint32 jpgOffset = jpgOffsets[tileEntry.index];
-      tile.offset =
-          subfile.parts["GMP"].offset + subfile.hdrLBL.lbl29_offset + jpgOffset;
+      tile.offset = subfile.parts["GMP"].offset + subfile.hdrLBL.lbl29_offset + jpgOffset;
       tile.lat1 = tileEntry.lat1;
       tile.lon1 = tileEntry.lon1;
       tile.lat2 = tileEntry.lat2;
@@ -798,8 +766,7 @@ void CGarminDecoder::processSubfile(const subfile_t& subfile) {
 
       QDir dir(outputPaths[scales]);
       QString outfile = dir.filePath(subfile.name + ".tif");
-      dataset = driver->Create(outfile.toUtf8().data(), width, height, 4,
-                               GDT_Byte, (char**)gtiffArgs);
+      dataset = driver->Create(outfile.toUtf8().data(), width, height, 4, GDT_Byte, (char**)gtiffArgs);
     }
 
     dataset->GetRasterBand(4)->Fill(0);
@@ -830,29 +797,24 @@ void CGarminDecoder::processSubfile(const subfile_t& subfile) {
         h = height - offY;
       }
 
-      QImage img = tile.img.scaled(w, h, Qt::IgnoreAspectRatio,
-                                   Qt::SmoothTransformation);
+      QImage img = tile.img.scaled(w, h, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
 
       GDALRasterBand* band;
       QByteArray alpha(w * h, 255);
       band = dataset->GetRasterBand(4);
-      if (band->RasterIO(GF_Write, offX, offY, w, h, alpha.data(), w, h,
-                         GDT_Byte, 1, 0) != CE_None) {
+      if (band->RasterIO(GF_Write, offX, offY, w, h, alpha.data(), w, h, GDT_Byte, 1, 0) != CE_None) {
         qFatal("unable to write data");
       }
       band = dataset->GetRasterBand(3);
-      if (band->RasterIO(GF_Write, offX, offY, w, h, img.bits() + 0, w, h,
-                         GDT_Byte, 4, 0) != CE_None) {
+      if (band->RasterIO(GF_Write, offX, offY, w, h, img.bits() + 0, w, h, GDT_Byte, 4, 0) != CE_None) {
         qFatal("unable to write data");
       }
       band = dataset->GetRasterBand(2);
-      if (band->RasterIO(GF_Write, offX, offY, w, h, img.bits() + 1, w, h,
-                         GDT_Byte, 4, 0) != CE_None) {
+      if (band->RasterIO(GF_Write, offX, offY, w, h, img.bits() + 1, w, h, GDT_Byte, 4, 0) != CE_None) {
         qFatal("unable to write data");
       }
       band = dataset->GetRasterBand(1);
-      if (band->RasterIO(GF_Write, offX, offY, w, h, img.bits() + 2, w, h,
-                         GDT_Byte, 4, 0) != CE_None) {
+      if (band->RasterIO(GF_Write, offX, offY, w, h, img.bits() + 2, w, h, GDT_Byte, 4, 0) != CE_None) {
         qFatal("unable to write data");
       }
     }

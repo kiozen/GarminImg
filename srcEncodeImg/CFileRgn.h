@@ -25,32 +25,26 @@
 
 class QByteArray;
 
-class CFileRgn
-{
-public:
-    CFileRgn();
-    virtual ~CFileRgn() = default;
+class CFileRgn {
+ public:
+  CFileRgn();
+  virtual ~CFileRgn() = default;
 
-    const CHdrRgn& header() const
-    {
-        return hdrRgn;
-    }
+  const CHdrRgn& header() const { return hdrRgn; }
 
-    quint32 addPolygons2(const QByteArray& polygons){return rgn2.addPolygons2(polygons);}
-    quint32 addPolylines2(const QByteArray& polylines){return rgn3.addPolylines2(polylines);}
-    quint32 addPoints2(const QByteArray& points){return rgn4.addPoints2(points);}
+  quint32 addPolygons2(const QByteArray& polygons) { return rgn2.addPolygons2(polygons); }
+  quint32 addPolylines2(const QByteArray& polylines) { return rgn3.addPolylines2(polylines); }
+  quint32 addPoints2(const QByteArray& points) { return rgn4.addPoints2(points); }
 
-    void writeHdr(QFile& file);
-    void writeData(QFile& file);
+  void writeHdr(QFile& file);
+  void writeData(QFile& file);
 
-private:
-    CHdrRgn hdrRgn;
+ private:
+  CHdrRgn hdrRgn;
 
-    CSection rgn1;
-    CRgn2 rgn2;
-    CRgn3 rgn3;
-    CRgn4 rgn4;
-    CSection rgn5;
+  CSection rgn1;
+  CRgn2 rgn2;
+  CRgn3 rgn3;
+  CRgn4 rgn4;
+  CSection rgn5;
 };
-
-

@@ -21,41 +21,37 @@
 
 using quint24 = quint8[3];
 
-class IHdrSubfile
-{
-public:
-    IHdrSubfile(quint16 size, const QString& typeSpecifier);
-    virtual ~IHdrSubfile() = default;
+class IHdrSubfile {
+ public:
+  IHdrSubfile(quint16 size, const QString& typeSpecifier);
+  virtual ~IHdrSubfile() = default;
 
-    virtual void write(QFile& file);
-    quint32 offset() const;
-    quint32 size() const;
+  virtual void write(QFile& file);
+  quint32 offset() const;
+  quint32 size() const;
 
-protected:
-    quint64 offset_ = 0;
-    quint64 size_ = 0;
+ protected:
+  quint64 offset_ = 0;
+  quint64 size_ = 0;
 
-private:
+ private:
 #pragma pack(1)
-    struct common_t
-    {
-        quint16 size;
-        char type[10];           ///< 0x00000002 .. 0x0000000B
-        const quint8 byte0x0000000C = 1;
-        const quint8 flag = 0;             ///< 0x0000000D
-        qint16 year;
-        qint8 month;
-        qint8 day;
-        qint8 hour;
-        qint8 minute;
-        qint8 second;
-    };
+  struct common_t {
+    quint16 size;
+    char type[10];  ///< 0x00000002 .. 0x0000000B
+    const quint8 byte0x0000000C = 1;
+    const quint8 flag = 0;  ///< 0x0000000D
+    qint16 year;
+    qint8 month;
+    qint8 day;
+    qint8 hour;
+    qint8 minute;
+    qint8 second;
+  };
 #ifdef WIN32
 #pragma pack()
 #else
 #pragma pack(0)
 #endif
-    common_t common_;
+  common_t common_;
 };
-
-

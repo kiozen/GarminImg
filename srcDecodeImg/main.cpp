@@ -45,8 +45,7 @@ int main(int argc, char** argv) {
   QCommandLineOption verOption = allArgs.addVersionOption();
   allArgs.addOptions({
       {"j", "Number of threads to use. Default MAX_CORE", "numThreads", "-1"},
-      {"d-scale", "Max. scale difference per scale level. Default: 0.00001 ",
-       "scale", "0.00001"},
+      {"d-scale", "Max. scale difference per scale level. Default: 0.00001 ", "scale", "0.00001"},
       {"dry-run", "Dry-run. Read all information but do not export the map."},
       {"allow-empty",
        "Allow the export of blank tiles with only a single color for all "
@@ -85,9 +84,7 @@ int main(int argc, char** argv) {
   } catch (const CException& e) {
     fflush(stdout);
     fflush(stderr);
-    std::cerr << std::endl
-              << "Kaboom!" << std::endl
-              << QString(e).toUtf8().constData();
+    std::cerr << std::endl << "Kaboom!" << std::endl << QString(e).toUtf8().constData();
     result = -1;
   }
 

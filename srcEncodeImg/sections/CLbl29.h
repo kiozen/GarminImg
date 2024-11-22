@@ -17,17 +17,14 @@
 **********************************************************************************************/
 #pragma once
 
-#include "sections/ISection.h"
-
 #include <tuple>
 
-class CLbl29 : public ISection
-{
-public:
-    CLbl29();
-    virtual ~CLbl29() = default;
+#include "sections/ISection.h"
 
-    std::tuple<quint32, quint32> add(const QString& path);
+class CLbl29 : public ISection {
+ public:
+  CLbl29();
+  virtual ~CLbl29() = default;
+
+  std::tuple<quint32, quint32> add(const QString& path);
 };
-
-

@@ -23,13 +23,9 @@
 #include "types/CSubdiv.h"
 
 CTile::CTile(quint32 indexTile, quint32 sizeTile, quint32 indexLabel)
-    : CPolyline(0x10613),
-      indexTile_(indexTile),
-      sizeTile_(sizeTile),
-      indexLabel_(indexLabel) {}
+    : CPolyline(0x10613), indexTile_(indexTile), sizeTile_(sizeTile), indexLabel_(indexLabel) {}
 
-void CTile::setBoundaries(qreal northbound, qreal eastbound, qreal southbound,
-                          qreal westbound) {
+void CTile::setBoundaries(qreal northbound, qreal eastbound, qreal southbound, qreal westbound) {
   northbound_ = northbound;
   eastbound_ = eastbound;
   southbound_ = southbound;
@@ -43,9 +39,7 @@ void CTile::setBoundaries(qreal northbound, qreal eastbound, qreal southbound,
   // qDebug() << *this;
 }
 
-#define GARMIN_DEG(x)                              \
-  ((x) < 0x800000 ? (double)(x)*360.0 / 16777216.0 \
-                  : (double)((x)-0x1000000) * 360.0 / 16777216.0)
+#define GARMIN_DEG(x) ((x) < 0x800000 ? (double)(x)*360.0 / 16777216.0 : (double)((x)-0x1000000) * 360.0 / 16777216.0)
 
 QByteArray CTile::encode(const CSubdiv& subdiv) const {
   CLinePreparer lp(*this, subdiv);

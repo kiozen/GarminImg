@@ -16,41 +16,27 @@
 
 **********************************************************************************************/
 
+#include "headers/CHdrGmp.h"
+
 #include "CFileLbl.h"
 #include "CFileRgn.h"
 #include "CFileTre.h"
-#include "headers/CHdrGmp.h"
 #include "headers/CHdrLbl.h"
 #include "headers/CHdrRgn.h"
 
 constexpr auto HDR_GMP_SIZE = 0x35;
 
-CHdrGmp::CHdrGmp()
-    : IHdrSubfile(HDR_GMP_SIZE, "GMP")
-{
+CHdrGmp::CHdrGmp() : IHdrSubfile(HDR_GMP_SIZE, "GMP") {}
+
+void CHdrGmp::write(QFile& file) {
+  file.seek(0);
+  IHdrSubfile::write(file);
+  file.write((const char*)&data, sizeof(data));
+  size_ = file.pos() - offset_;
 }
 
-void CHdrGmp::write(QFile& file)
-{
-    file.seek(0);
-    IHdrSubfile::write(file);
-    file.write((const char*)&data,  sizeof(data));
-    size_ = file.pos() - offset_;
-}
+void CHdrGmp::setTre(const CFileTre& tre) { data.offsetTRE = tre.header().offset(); }
 
-void CHdrGmp::setTre(const CFileTre &tre)
-{
-    data.offsetTRE = tre.header().offset();
-}
+void CHdrGmp::setRgn(const CFileRgn& rgn) { data.offsetRGN = rgn.header().offset(); }
 
-void CHdrGmp::setRgn(const CFileRgn& rgn)
-{
-    data.offsetRGN = rgn.header().offset();
-}
-
-void CHdrGmp::setLbl(const CFileLbl& lbl)
-{
-    data.offsetLBL = lbl.header().offset();
-}
-
-
+void CHdrGmp::setLbl(const CFileLbl& lbl) { data.offsetLBL = lbl.header().offset(); }

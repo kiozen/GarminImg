@@ -19,20 +19,12 @@
 
 #include <QException>
 
-class CException : public QException
-{
-public:
-    CException(const QString& msg)
-        : msg(msg){}
+class CException : public QException {
+ public:
+  CException(const QString& msg) : msg(msg) {}
 
-    operator const QString&() const
-    {
-        return msg;
-    }
+  operator const QString&() const { return msg; }
 
-
-private:
-    QString msg;
+ private:
+  QString msg;
 };
-
-

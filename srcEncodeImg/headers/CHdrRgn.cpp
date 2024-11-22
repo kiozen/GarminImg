@@ -17,6 +17,7 @@
 **********************************************************************************************/
 
 #include "headers/CHdrRgn.h"
+
 #include "sections/CRgn2.h"
 #include "sections/CRgn3.h"
 #include "sections/CRgn4.h"
@@ -24,54 +25,42 @@
 
 constexpr auto HDR_RGN_SIZE = 0x007D;
 
-CHdrRgn::CHdrRgn()
-    : IHdrSubfile(HDR_RGN_SIZE, "RGN")
-{
+CHdrRgn::CHdrRgn() : IHdrSubfile(HDR_RGN_SIZE, "RGN") {}
+
+void CHdrRgn::setRgn1(CSection& section) {
+  data.offset1 = section.offset();
+  data.length1 = section.size();
 }
 
-void CHdrRgn::setRgn1(CSection& section)
-{
-    data.offset1 = section.offset();
-    data.length1 = section.size();
+void CHdrRgn::setRgn2(CRgn2& section) {
+  data.offset_polyg2 = section.offset();
+  data.length_polyg2 = section.size();
 }
 
-void CHdrRgn::setRgn2(CRgn2 &section)
-{
-    data.offset_polyg2 = section.offset();
-    data.length_polyg2 = section.size();
+void CHdrRgn::setRgn3(CRgn3& section) {
+  data.offset_polyl2 = section.offset();
+  data.length_polyl2 = section.size();
 }
 
-void CHdrRgn::setRgn3(CRgn3& section)
-{
-    data.offset_polyl2 = section.offset();
-    data.length_polyl2 = section.size();
+void CHdrRgn::setRgn4(CRgn4& section) {
+  data.offset_point2 = section.offset();
+  data.length_point2 = section.size();
 }
 
-void CHdrRgn::setRgn4(CRgn4& section)
-{
-    data.offset_point2 = section.offset();
-    data.length_point2 = section.size();
+void CHdrRgn::setRgn5(CSection& section) {
+  data.offset2 = section.offset();
+  data.length2 = section.size();
 }
 
-void CHdrRgn::setRgn5(CSection& section)
-{
-    data.offset2 = section.offset();
-    data.length2 = section.size();
-}
-
-void CHdrRgn::write(QFile& file)
-{
-    if(offset_)
-    {
-        file.seek(offset_);
-        IHdrSubfile::write(file);
-        file.write((const char*)&data,  sizeof(data));
-    }
-    else
-    {
-        offset_ = file.pos();
-        IHdrSubfile::write(file);
-        file.write((const char*)&data,  sizeof(data));
-        size_ = file.pos() - offset_;
-    }
+void CHdrRgn::write(QFile& file) {
+  if (offset_) {
+    file.seek(offset_);
+    IHdrSubfile::write(file);
+    file.write((const char*)&data, sizeof(data));
+  } else {
+    offset_ = file.pos();
+    IHdrSubfile::write(file);
+    file.write((const char*)&data, sizeof(data));
+    size_ = file.pos() - offset_;
+  }
 }

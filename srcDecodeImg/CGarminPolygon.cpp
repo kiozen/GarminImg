@@ -43,12 +43,7 @@ struct sign_info_t {
   bool y_has_sign;
   bool ny;
 };
-sign_info_t::sign_info_t()
-    : sign_info_bits(2),
-      x_has_sign(true),
-      nx(false),
-      y_has_sign(true),
-      ny(false) {}
+sign_info_t::sign_info_t() : sign_info_bits(2), x_has_sign(true), nx(false), y_has_sign(true), ny(false) {}
 
 quint32 CGarminPolygon::cnt = 0;
 qint32 CGarminPolygon::maxVecSize = 0;
@@ -67,8 +62,7 @@ CGarminPolygon::CGarminPolygon()
 
 CGarminPolygon::~CGarminPolygon() {}
 
-quint32 CGarminPolygon::decode(qint32 iCenterLon, qint32 iCenterLat,
-                               quint32 shift, bool line, const quint8* pData,
+quint32 CGarminPolygon::decode(qint32 iCenterLon, qint32 iCenterLat, quint32 shift, bool line, const quint8* pData,
                                const quint8* pEnd) {
   quint32 bytes_total = 10;
   // bitstream has a two byte length
@@ -189,8 +183,7 @@ quint32 CGarminPolygon::decode(qint32 iCenterLon, qint32 iCenterLat,
   xy.u = GARMIN_RAD(x1);
   xy.v = GARMIN_RAD(y1);
 #ifdef DEBUG_SHOW_POLY_PTS
-  qDebug() << xy.u << xy.v << Qt::hex << x1 << y1 << GARMIN_DEG(x1)
-           << GARMIN_DEG(y1);
+  qDebug() << xy.u << xy.v << Qt::hex << x1 << y1 << GARMIN_DEG(x1) << GARMIN_DEG(y1);
 #endif
   u << xy.u;
   v << xy.v;
@@ -216,8 +209,7 @@ quint32 CGarminPolygon::decode(qint32 iCenterLon, qint32 iCenterLat,
     //             << (cnt + 1) << line; assert(0);
     //         }
 #ifdef DEBUG_SHOW_POLY_PTS
-    qDebug() << xy.u << xy.v << Qt::hex << x1 << y1 << GARMIN_DEG(x1)
-             << GARMIN_DEG(y1);
+    qDebug() << xy.u << xy.v << Qt::hex << x1 << y1 << GARMIN_DEG(x1) << GARMIN_DEG(y1);
 #endif
     u << xy.u;
     v << xy.v;
@@ -236,8 +228,7 @@ quint32 CGarminPolygon::decode(qint32 iCenterLon, qint32 iCenterLat,
   return bytes_total;
 }
 
-quint32 CGarminPolygon::decode2(qint32 iCenterLon, qint32 iCenterLat,
-                                quint32 shift, bool line, const quint8* pData,
+quint32 CGarminPolygon::decode2(qint32 iCenterLon, qint32 iCenterLat, quint32 shift, bool line, const quint8* pData,
                                 const quint8* pEnd) {
   quint32 bytes_total = 6;
   // bitstream length
@@ -323,8 +314,7 @@ quint32 CGarminPolygon::decode2(qint32 iCenterLon, qint32 iCenterLat,
   xy.u = GARMIN_RAD(x1);
   xy.v = GARMIN_RAD(y1);
 #ifdef DEBUG_SHOW_POLY_PTS
-  qDebug() << xy.u << xy.v << Qt::hex << x1 << y1 << GARMIN_DEG(x1)
-           << GARMIN_DEG(y1);
+  qDebug() << xy.u << xy.v << Qt::hex << x1 << y1 << GARMIN_DEG(x1) << GARMIN_DEG(y1);
 #endif
   u << xy.u;
   v << xy.v;
@@ -379,8 +369,7 @@ quint32 CGarminPolygon::decode2(qint32 iCenterLon, qint32 iCenterLat,
   return bytes_total;
 }
 
-void CGarminPolygon::bits_per_coord(quint8 base, quint8 bfirst, quint32& bx,
-                                    quint32& by, sign_info_t& signinfo,
+void CGarminPolygon::bits_per_coord(quint8 base, quint8 bfirst, quint32& bx, quint32& by, sign_info_t& signinfo,
                                     bool isVer2) {
   bool x_sign_same, y_sign_same;
 
@@ -445,8 +434,7 @@ int CGarminPolygon::bits_per_coord(quint8 base, bool is_signed) {
   return n;
 }
 
-CShiftReg::CShiftReg(const quint8* pData, quint32 n, quint32 bx, quint32 by,
-                     bool extra_bit, sign_info_t& si)
+CShiftReg::CShiftReg(const quint8* pData, quint32 n, quint32 bx, quint32 by, bool extra_bit, sign_info_t& si)
     : reg(0),
       pData(pData),
       bytes(n),

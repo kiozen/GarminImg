@@ -18,29 +18,22 @@
 
 #include "sections/CTre7.h"
 
-CTre7::CTre7()
-{
-    stream.setByteOrder(QDataStream::LittleEndian);
+CTre7::CTre7() { stream.setByteOrder(QDataStream::LittleEndian); }
+
+void CTre7::addRecord(quint32 offsetPolygon2) {
+  Q_ASSERT_X(sizeRecord_ == 4, "addRecord", "Record size does not match");
+  stream << offsetPolygon2;
 }
 
-void CTre7::addRecord(quint32 offsetPolygon2)
-{
-    Q_ASSERT_X(sizeRecord_ == 4, "addRecord", "Record size does not match");
-    stream << offsetPolygon2;
+void CTre7::addRecord(quint32 offsetPolygon2, quint32 offsetPolyline2) {
+  Q_ASSERT_X(sizeRecord_ == 8, "addRecord", "Record size does not match");
+  stream << offsetPolygon2;
+  stream << offsetPolyline2;
 }
 
-void CTre7::addRecord(quint32 offsetPolygon2, quint32 offsetPolyline2)
-{
-    Q_ASSERT_X(sizeRecord_ == 8, "addRecord", "Record size does not match");
-    stream << offsetPolygon2;
-    stream << offsetPolyline2;
+void CTre7::addRecord(quint32 offsetPolygon2, quint32 offsetPolyline2, quint32 offsetPoint2) {
+  Q_ASSERT_X(sizeRecord_ == 12, "addRecord", "Record size does not match");
+  stream << offsetPolygon2;
+  stream << offsetPolyline2;
+  stream << offsetPoint2;
 }
-
-void CTre7::addRecord(quint32 offsetPolygon2, quint32 offsetPolyline2, quint32 offsetPoint2)
-{
-    Q_ASSERT_X(sizeRecord_ == 12, "addRecord", "Record size does not match");
-    stream << offsetPolygon2;
-    stream << offsetPolyline2;
-    stream << offsetPoint2;
-}
-

@@ -19,11 +19,8 @@
 
 #include "sections/ISection.h"
 
-class CLbl12 : public ISection
-{
-public:
-    CLbl12();
-    virtual ~CLbl12() = default;
+class CLbl12 : public ISection {
+ public:
+  CLbl12();
+  virtual ~CLbl12() = default;
 };
-
-

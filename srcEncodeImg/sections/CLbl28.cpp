@@ -18,18 +18,13 @@
 
 #include "sections/CLbl28.h"
 
-CLbl28::CLbl28()
-{
-    out.setByteOrder(QDataStream::LittleEndian);
-    sizeRecord_ = 4;
+CLbl28::CLbl28() {
+  out.setByteOrder(QDataStream::LittleEndian);
+  sizeRecord_ = 4;
 }
 
-
-quint32 CLbl28::add(quint32 offset)
-{
-    quint32 index = data_.size() / sizeof(offset);
-    out << offset;
-    return index;
+quint32 CLbl28::add(quint32 offset) {
+  quint32 index = data_.size() / sizeof(offset);
+  out << offset;
+  return index;
 }
-
-

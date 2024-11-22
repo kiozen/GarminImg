@@ -24,12 +24,9 @@
   The table holds offsets into the LBL1 section to locate the copy right
   strings.
  */
-class CTre3 : public ISection
-{
-public:
-    CTre3();
-    virtual ~CTre3() = default;
-    void add(quint32 lbl1Offset);
+class CTre3 : public ISection {
+ public:
+  CTre3();
+  virtual ~CTre3() = default;
+  void add(quint32 lbl1Offset);
 };
-
-

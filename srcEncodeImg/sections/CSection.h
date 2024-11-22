@@ -19,13 +19,10 @@
 
 #include "sections/ISection.h"
 
-class CSection : public ISection
-{
-public:
-    CSection(quint16 recSize = 0);
-    virtual ~CSection() = default;
+class CSection : public ISection {
+ public:
+  CSection(quint16 recSize = 0);
+  virtual ~CSection() = default;
 
-    void write(QFile& file) override;
+  void write(QFile& file) override;
 };
-
-

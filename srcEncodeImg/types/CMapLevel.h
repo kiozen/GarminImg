@@ -17,39 +17,27 @@
 **********************************************************************************************/
 #pragma once
 
-#include "types/CSubdiv.h"
-
 #include <QtCore>
 
-class CMapLevel
-{
-public:
-    CMapLevel(quint8 zoom, quint8 bits);
-    virtual ~CMapLevel() = default;
+#include "types/CSubdiv.h"
 
-    void write(QFile& file, bool &first);
+class CMapLevel {
+ public:
+  CMapLevel(quint8 zoom, quint8 bits);
+  virtual ~CMapLevel() = default;
 
-    QList<CSubdiv>& subdivs()
-    {
-        return subdivs_;
-    }
+  void write(QFile& file, bool& first);
 
-    quint8 zoom() const {return zoom_;}
+  QList<CSubdiv>& subdivs() { return subdivs_; }
 
-    bool operator<(const CMapLevel& m) const
-    {
-        return m.zoom() < zoom_;
-    }
+  quint8 zoom() const { return zoom_; }
 
-    bool operator==(const CMapLevel& m) const
-    {
-        return m.zoom() == zoom_;
-    }
+  bool operator<(const CMapLevel& m) const { return m.zoom() < zoom_; }
 
-private:    
-    quint8 zoom_ = 0;
-    quint8 bits_ = 0;
-    QList<CSubdiv> subdivs_;
+  bool operator==(const CMapLevel& m) const { return m.zoom() == zoom_; }
+
+ private:
+  quint8 zoom_ = 0;
+  quint8 bits_ = 0;
+  QList<CSubdiv> subdivs_;
 };
-
-

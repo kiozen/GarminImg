@@ -25,37 +25,33 @@ class CFileRgn;
 class CHdrRgn;
 class CHdrLbl;
 
-class CHdrGmp : public IHdrSubfile
-{
-public:
-    CHdrGmp();
-    virtual ~CHdrGmp() = default;
+class CHdrGmp : public IHdrSubfile {
+ public:
+  CHdrGmp();
+  virtual ~CHdrGmp() = default;
 
-    void write(QFile& file) override;
+  void write(QFile &file) override;
 
-    void setTre(const CFileTre &tre);
-    void setRgn(const CFileRgn &rgn);
-    void setLbl(const CFileLbl &lbl);
+  void setTre(const CFileTre &tre);
+  void setRgn(const CFileRgn &rgn);
+  void setLbl(const CFileLbl &lbl);
 
-protected:
+ protected:
 #pragma pack(1)
-    struct data_t
-    {
-        quint8 byte0x00000015_0x00000018[4] = {0};
-        quint32 offsetTRE = 0;
-        quint32 offsetRGN = 0;
-        quint32 offsetLBL = 0;
-        quint32 offsetNET = 0;
-        quint32 offsetNOD = 0;
-        quint32 offsetDEM = 0;
-        quint8 byte0x00000031_0x00000034[4] = {0};
-    };
+  struct data_t {
+    quint8 byte0x00000015_0x00000018[4] = {0};
+    quint32 offsetTRE = 0;
+    quint32 offsetRGN = 0;
+    quint32 offsetLBL = 0;
+    quint32 offsetNET = 0;
+    quint32 offsetNOD = 0;
+    quint32 offsetDEM = 0;
+    quint8 byte0x00000031_0x00000034[4] = {0};
+  };
 #ifdef WIN32
 #pragma pack()
 #else
 #pragma pack(0)
 #endif
-    data_t data;
+  data_t data;
 };
-
-

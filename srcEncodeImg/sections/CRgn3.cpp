@@ -18,14 +18,10 @@
 
 #include "CRgn3.h"
 
-CRgn3::CRgn3()
-{
+CRgn3::CRgn3() {}
 
-}
-
-quint32 CRgn3::addPolylines2(const QByteArray& polylines)
-{
-    quint32 off = data_.size();
-    data_ += polylines;
-    return off;
+quint32 CRgn3::addPolylines2(const QByteArray& polylines) {
+  quint32 off = data_.size();
+  data_ += polylines;
+  return off;
 }

@@ -25,19 +25,16 @@
   of a sub-file contain no points or lines the record entry size can be reduced.
 
  */
-class CTre7 : public ISection
-{
-public:
-    CTre7();
-    virtual ~CTre7() = default;
+class CTre7 : public ISection {
+ public:
+  CTre7();
+  virtual ~CTre7() = default;
 
-    void setSizeRecord(quint16 sizeRecord){sizeRecord_ = sizeRecord;}
-    void addRecord(quint32 offsetPolygon2);
-    void addRecord(quint32 offsetPolygon2, quint32 offsetPolyline2);
-    void addRecord(quint32 offsetPolygon2, quint32 offsetPolyline2, quint32 offsetPoint2);
+  void setSizeRecord(quint16 sizeRecord) { sizeRecord_ = sizeRecord; }
+  void addRecord(quint32 offsetPolygon2);
+  void addRecord(quint32 offsetPolygon2, quint32 offsetPolyline2);
+  void addRecord(quint32 offsetPolygon2, quint32 offsetPolyline2, quint32 offsetPoint2);
 
-private:
-    QDataStream stream {&data_, QIODevice::WriteOnly};
+ private:
+  QDataStream stream{&data_, QIODevice::WriteOnly};
 };
-
-

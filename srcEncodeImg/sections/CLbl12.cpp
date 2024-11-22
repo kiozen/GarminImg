@@ -18,10 +18,7 @@
 
 #include "CLbl12.h"
 
-CLbl12::CLbl12()
-{
-    data_ = "Western European";
-    data_.append('\0');
+CLbl12::CLbl12() {
+  data_ = "Western European";
+  data_.append('\0');
 }
-
-

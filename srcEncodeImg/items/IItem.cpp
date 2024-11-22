@@ -18,9 +18,4 @@
 
 #include "items/IItem.h"
 
-IItem::IItem(quint32 type)
-    : type_(type)
-{
-}
-
-
+IItem::IItem(quint32 type) : type_(type) {}

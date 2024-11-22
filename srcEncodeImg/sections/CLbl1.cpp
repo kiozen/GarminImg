@@ -18,15 +18,11 @@
 
 #include "sections/CLbl1.h"
 
-CLbl1::CLbl1()
-{
-}
+CLbl1::CLbl1() {}
 
-quint32 CLbl1::add(const QString& str)
-{
-    quint32 offset = data_.size();
-    data_.append(str.toLatin1());
-    data_.append('\0');
-    return offset;
+quint32 CLbl1::add(const QString& str) {
+  quint32 offset = data_.size();
+  data_.append(str.toLatin1());
+  data_.append('\0');
+  return offset;
 }
-

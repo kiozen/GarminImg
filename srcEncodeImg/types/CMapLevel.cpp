@@ -18,29 +18,21 @@
 
 #include "CMapLevel.h"
 
-CMapLevel::CMapLevel(quint8 zoom, quint8 bits)
-    : zoom_(zoom)
-    , bits_(bits)
-{
-}
+CMapLevel::CMapLevel(quint8 zoom, quint8 bits) : zoom_(zoom), bits_(bits) {}
 
-void CMapLevel::write(QFile& file, bool& first)
-{
-    QByteArray data;
-    QDataStream stream(&data, QIODevice::WriteOnly);
-    stream.setByteOrder(QDataStream::LittleEndian);
+void CMapLevel::write(QFile& file, bool& first) {
+  QByteArray data;
+  QDataStream stream(&data, QIODevice::WriteOnly);
+  stream.setByteOrder(QDataStream::LittleEndian);
 
-    if(first)
-    {
-        stream << quint8(zoom_ |= 0x80);
-        first = false;
-    }
-    else
-    {
-        stream << quint8(zoom_ &= ~0x80);
-    }
-    stream << quint8(bits_);
-    stream << quint16(subdivs_.count());
+  if (first) {
+    stream << quint8(zoom_ |= 0x80);
+    first = false;
+  } else {
+    stream << quint8(zoom_ &= ~0x80);
+  }
+  stream << quint8(bits_);
+  stream << quint16(subdivs_.count());
 
-    file.write(data);
+  file.write(data);
 }

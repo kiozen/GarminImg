@@ -17,57 +17,54 @@
 **********************************************************************************************/
 #pragma once
 
+#include <QtCore>
+
 #include "CFuzzyMap.h"
 #include "Garmin.h"
-#include <QtCore>
 
 class GDALDriverManager;
 class GDALDriver;
 
-class CGarminDecoder : public QObject
-{
-public:
-    CGarminDecoder(const QString& filename);
-    virtual ~CGarminDecoder() = default;
+class CGarminDecoder : public QObject {
+ public:
+  CGarminDecoder(const QString &filename);
+  virtual ~CGarminDecoder() = default;
 
-    void loadBasics();
-    void dumpSubfiles();
-    void analyse();
+  void loadBasics();
+  void dumpSubfiles();
+  void analyse();
 
-private:
-    void print(const char * format, ...);
-    void readFAT(QFile &file);
-    void readSubfiles(QFile &file);
-    void readGMP(QFile &file, subfile_t &subfile);
-    void readMapLevels(QFile &file, subfile_t &subfile);
-    void readSubdivInfo(QFile &file, subfile_t &subfile);
-    void readSubdivInfoExt(QFile &file, subfile_t &subfile);
-    void readStringTable(QFile &file, subfile_t &subfile);
+ private:
+  void print(const char *format, ...);
+  void readFAT(QFile &file);
+  void readSubfiles(QFile &file);
+  void readGMP(QFile &file, subfile_t &subfile);
+  void readMapLevels(QFile &file, subfile_t &subfile);
+  void readSubdivInfo(QFile &file, subfile_t &subfile);
+  void readSubdivInfoExt(QFile &file, subfile_t &subfile);
+  void readStringTable(QFile &file, subfile_t &subfile);
 
+  void readTre8(QFile &file, subfile_t &subfile);
 
-    void readTre8(QFile &file, subfile_t &subfile);
+  void readMPS(QFile &file, subfile_t &subfile);
+  void readProductInfo(QDataStream &stream);
+  void readMapInfo(QDataStream &stream);
+  QString readRawString(QDataStream &stream);
 
-    void readMPS(QFile& file, subfile_t &subfile);
-    void readProductInfo(QDataStream& stream);
-    void readMapInfo(QDataStream& stream);
-    QString readRawString(QDataStream& stream);
+  void readTRE(QFile &file, subfile_t &subfile);
+  void readRGN(QFile &file, subfile_t &subfile);
+  void readLBL(QFile &file, subfile_t &subfile);
 
-    void readTRE(QFile& file, subfile_t &subfile);
-    void readRGN(QFile& file, subfile_t &subfile);
-    void readLBL(QFile& file, subfile_t &subfile);
+  void processSubfile(const subfile_t &subfile);
 
-    void processSubfile(const subfile_t &subfile);
+  QString filename;
+  QString basename;
 
-    QString filename;
-    QString basename;
+  QMap<QString, subfile_t> subfiles;
 
-    QMap<QString, subfile_t> subfiles;
+  QMutex mutex;
 
-    QMutex mutex;
-
-    CFuzzyMap<QString> outputPaths;
-    GDALDriverManager * drvman = nullptr;
-    GDALDriver * driver = nullptr;
+  CFuzzyMap<QString> outputPaths;
+  GDALDriverManager *drvman = nullptr;
+  GDALDriver *driver = nullptr;
 };
-
-

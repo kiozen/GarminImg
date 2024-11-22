@@ -17,13 +17,9 @@
 **********************************************************************************************/
 
 #include "sections/CTre2.h"
+
 #include "types/coords.h"
 
-CTre2::CTre2()
-{
-}
+CTre2::CTre2() {}
 
-void CTre2::addSubdiv(const CSubdiv& subdiv)
-{
-    data_ += subdiv.encode();
-}
+void CTre2::addSubdiv(const CSubdiv& subdiv) { data_ += subdiv.encode(); }

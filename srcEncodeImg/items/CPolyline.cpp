@@ -18,8 +18,4 @@
 
 #include "items/CPolyline.h"
 
-
-CPolyline::CPolyline(quint32 type)
-    : IItem(type)
-{
-}
+CPolyline::CPolyline(quint32 type) : IItem(type) {}

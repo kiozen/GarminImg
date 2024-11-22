@@ -19,25 +19,14 @@
 
 #include <QException>
 
-class CException : public QException
-{
-public:
-    CException(const QString& msg)
-        : msg(msg){}
+class CException : public QException {
+ public:
+  CException(const QString& msg) : msg(msg) {}
 
-    operator const QString&() const
-    {
-        return msg;
-    }
+  operator const QString&() const { return msg; }
 
-    const char * what() const noexcept override
-    {
-        return msg.toUtf8().data();
-    }
+  const char* what() const noexcept override { return msg.toUtf8().data(); }
 
-
-private:
-    QString msg;
+ private:
+  QString msg;
 };
-
-

@@ -20,41 +20,33 @@
 
 #include <algorithm>
 
-CTre8::CTre8()
-{
-    sizeRecord_ = 3;
-}
+CTre8::CTre8() { sizeRecord_ = 3; }
 
+void CTre8::write(QFile& file) {
+  data_.clear();
+  QDataStream stream(&data_, QIODevice::WriteOnly);
+  stream.setByteOrder(QDataStream::LittleEndian);
 
-void CTre8::write(QFile& file)
-{
-    data_.clear();
-    QDataStream stream(&data_, QIODevice::WriteOnly);
-    stream.setByteOrder(QDataStream::LittleEndian);
+  for (const quint32 extType : polylines_.keys()) {
+    quint8 type = (extType >> 8) & 0x0FF;
+    quint8 subtype = extType & 0x0FF;
+    quint8 maxlevel = *std::max_element(polylines_[extType].begin(), polylines_[extType].end());
+    stream << type << maxlevel << subtype;
+  }
 
-    for(const quint32 extType : polylines_.keys())
-    {
-        quint8 type = (extType >> 8) & 0x0FF;
-        quint8 subtype = extType & 0x0FF;
-        quint8 maxlevel = *std::max_element(polylines_[extType].begin(), polylines_[extType].end());
-        stream << type << maxlevel << subtype;
-    }
+  for (const quint32 extType : polygons_.keys()) {
+    quint8 type = (extType >> 8) & 0x0FF;
+    quint8 subtype = extType & 0x0FF;
+    quint8 maxlevel = *std::max_element(polygons_[extType].begin(), polygons_[extType].end());
+    stream << type << maxlevel << subtype;
+  }
 
-    for(const quint32 extType : polygons_.keys())
-    {
-        quint8 type = (extType >> 8) & 0x0FF;
-        quint8 subtype = extType & 0x0FF;
-        quint8 maxlevel = *std::max_element(polygons_[extType].begin(), polygons_[extType].end());
-        stream << type << maxlevel << subtype;
-    }
+  for (const quint32 extType : points_.keys()) {
+    quint8 type = (extType >> 8) & 0x0FF;
+    quint8 subtype = extType & 0x0FF;
+    quint8 maxlevel = *std::max_element(points_[extType].begin(), points_[extType].end());
+    stream << type << maxlevel << subtype;
+  }
 
-    for(const quint32 extType : points_.keys())
-    {
-        quint8 type = (extType >> 8) & 0x0FF;
-        quint8 subtype = extType & 0x0FF;
-        quint8 maxlevel = *std::max_element(points_[extType].begin(), points_[extType].end());
-        stream << type << maxlevel << subtype;
-    }
-
-    ISection::write(file);
+  ISection::write(file);
 }

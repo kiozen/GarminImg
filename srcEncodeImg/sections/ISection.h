@@ -19,26 +19,20 @@
 
 #include <QtCore>
 
-class ISection
-{
-public:
-    ISection();
-    virtual ~ISection() = default;
+class ISection {
+ public:
+  ISection();
+  virtual ~ISection() = default;
 
-    virtual void write(QFile& file);
-    quint32 offset() const;
-    quint32 size() const;
-    quint16 sizeRecord() const
-    {
-        return sizeRecord_;
-    }
+  virtual void write(QFile& file);
+  quint32 offset() const;
+  quint32 size() const;
+  quint16 sizeRecord() const { return sizeRecord_; }
 
-protected:
-    quint64 offset_ = 0;
-    quint64 size_ = 0;
-    quint16 sizeRecord_ = 0;
+ protected:
+  quint64 offset_ = 0;
+  quint64 size_ = 0;
+  quint16 sizeRecord_ = 0;
 
-    QByteArray data_;
+  QByteArray data_;
 };
-
-

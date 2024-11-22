@@ -20,30 +20,24 @@
 
 #include <QtCore>
 
-class CKeyGen
-{
-public:
-    CKeyGen(quint32 mapId, qint32 sizeHdrTre);
-    virtual ~CKeyGen() = default;
+class CKeyGen {
+ public:
+  CKeyGen(quint32 mapId, qint32 sizeHdrTre);
+  virtual ~CKeyGen() = default;
 
-    void calcKey(quint8 *target);
+  void calcKey(quint8 *target);
 
-private:
-    void calcThird();
-    void calcFourth();
-    void calcFirst();
-    void calcSecond();
-    void addOffset();
-    quint32 value(qint32 n);
+ private:
+  void calcThird();
+  void calcFourth();
+  void calcFirst();
+  void calcSecond();
+  void addOffset();
+  quint32 value(qint32 n);
 
-    int mapIdDigit(qint32 i)
-    {
-        return (mapId >> (4 * (7 - i))) & 0xf;
-    }
-    quint8 values[4][8] = {0};
+  int mapIdDigit(qint32 i) { return (mapId >> (4 * (7 - i))) & 0xf; }
+  quint8 values[4][8] = {0};
 
-    quint32 mapId = 0;
-    qint32 sizeHdrTre = 0;
+  quint32 mapId = 0;
+  qint32 sizeHdrTre = 0;
 };
-
-

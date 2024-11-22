@@ -21,13 +21,10 @@
 
 class QByteArray;
 
-class CRgn4 : public ISection
-{
-public:
-    CRgn4();
-    virtual ~CRgn4() = default;
+class CRgn4 : public ISection {
+ public:
+  CRgn4();
+  virtual ~CRgn4() = default;
 
-    quint32 addPoints2(const QByteArray& points);
+  quint32 addPoints2(const QByteArray& points);
 };
-
-

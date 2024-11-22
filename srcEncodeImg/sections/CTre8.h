@@ -29,26 +29,23 @@
   item to the rgn file.
 
 */
-class CTre8 : public ISection
-{
-public:
-    CTre8();
-    virtual ~CTre8() = default;
+class CTre8 : public ISection {
+ public:
+  CTre8();
+  virtual ~CTre8() = default;
 
-    void write(QFile& file) override;
+  void write(QFile& file) override;
 
-    void addPolyline(quint32 type, quint8 maplevel){polylines_[type] << maplevel;}
-    void addPolygon(quint32 type, quint8 maplevel){polygons_[type] << maplevel;}
-    void addPoint(quint32 type, quint8 maplevel){points_[type] << maplevel;}
+  void addPolyline(quint32 type, quint8 maplevel) { polylines_[type] << maplevel; }
+  void addPolygon(quint32 type, quint8 maplevel) { polygons_[type] << maplevel; }
+  void addPoint(quint32 type, quint8 maplevel) { points_[type] << maplevel; }
 
-    quint16 numPolylines() const {return polylines_.size();}
-    quint16 numPolygons() const {return polygons_.size();}
-    quint16 numPoints() const {return points_.size();}
+  quint16 numPolylines() const { return polylines_.size(); }
+  quint16 numPolygons() const { return polygons_.size(); }
+  quint16 numPoints() const { return points_.size(); }
 
-private:
-    QMap<quint32, QSet<quint8> > polylines_;
-    QMap<quint32, QSet<quint8> > polygons_;
-    QMap<quint32, QSet<quint8> > points_;
+ private:
+  QMap<quint32, QSet<quint8> > polylines_;
+  QMap<quint32, QSet<quint8> > polygons_;
+  QMap<quint32, QSet<quint8> > points_;
 };
-
-

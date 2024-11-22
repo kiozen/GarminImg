@@ -25,39 +25,36 @@
 
 class QImage;
 
-class CFileGmp
-{
-public:
-    CFileGmp(const QString& name);
-    virtual ~CFileGmp() = default;
+class CFileGmp {
+ public:
+  CFileGmp(const QString& name);
+  virtual ~CFileGmp() = default;
 
-    void write(const QDir& path);
+  void write(const QDir& path);
 
-    void addCopyright(const QString& str);
-    CSubdiv &addSubdiv(quint8 maplevel, qreal northbound, qreal eastbound, qreal southbound, qreal westbound);
-    void addTile(const QString &path,
-                 qreal northbound, qreal eastbound,
-                 qreal southbound, qreal westbound,
-                 QList<qint16> subdivNumbers);
+  void addCopyright(const QString& str);
+  CSubdiv& addSubdiv(quint8 maplevel, qreal northbound, qreal eastbound, qreal southbound, qreal westbound);
+  void addTile(const QString& path, qreal northbound, qreal eastbound, qreal southbound, qreal westbound,
+               QList<qint16> subdivNumbers);
 
-    void remove(const QDir& path);
+  void remove(const QDir& path);
 
-private:
-    QString name;
+ private:
+  QString name;
 
-    CHdrGmp hdrGmp;
+  CHdrGmp hdrGmp;
 
-    CFileTre tre;
-    CFileRgn rgn;
-    CFileLbl lbl;
+  CFileTre tre;
+  CFileRgn rgn;
+  CFileLbl lbl;
 
-    static QStringList copyright1;
-    static QStringList copyright2;
+  static QStringList copyright1;
+  static QStringList copyright2;
 
-    QByteArray copyrightData1;
-    QByteArray copyrightData2;
+  QByteArray copyrightData1;
+  QByteArray copyrightData2;
 
-    bool hasPolygon2Section = false;
-    bool hasPolyline2Section = false;
-    bool hasPoint2Section = false;
+  bool hasPolygon2Section = false;
+  bool hasPolyline2Section = false;
+  bool hasPoint2Section = false;
 };

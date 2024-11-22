@@ -19,25 +19,22 @@
 
 #include "items/CPolyline.h"
 
-class CTile : public CPolyline
-{
-public:
-    CTile(quint32 indexTile, quint32 sizeTile, quint32 indexLabel);
-    virtual ~CTile() = default;
+class CTile : public CPolyline {
+ public:
+  CTile(quint32 indexTile, quint32 sizeTile, quint32 indexLabel);
+  virtual ~CTile() = default;
 
-    void setBoundaries(qreal northbound, qreal eastbound, qreal southbound, qreal westbound);
+  void setBoundaries(qreal northbound, qreal eastbound, qreal southbound, qreal westbound);
 
-    QByteArray encode(const CSubdiv &subdiv) const;
+  QByteArray encode(const CSubdiv &subdiv) const;
 
-private:
-    quint32 indexTile_ = 0;
-    quint32 indexLabel_ = 0;
-    quint32 sizeTile_ = 0;
+ private:
+  quint32 indexTile_ = 0;
+  quint32 indexLabel_ = 0;
+  quint32 sizeTile_ = 0;
 
-    qreal northbound_ = 0;
-    qreal eastbound_ = 0;
-    qreal southbound_ = 0;
-    qreal westbound_ = 0;
+  qreal northbound_ = 0;
+  qreal eastbound_ = 0;
+  qreal southbound_ = 0;
+  qreal westbound_ = 0;
 };
-
-

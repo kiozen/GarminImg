@@ -17,24 +17,17 @@
 **********************************************************************************************/
 #pragma once
 
-#include <functional>
 #include <QRunnable>
+#include <functional>
 
 using fSubfileTask = std::function<void()>;
-class CSubfileTask : public QRunnable
-{
-public:
-    CSubfileTask(fSubfileTask task)
-        : task(task)
-    {
-    }
-    ~CSubfileTask() = default;
+class CSubfileTask : public QRunnable {
+ public:
+  CSubfileTask(fSubfileTask task) : task(task) {}
+  ~CSubfileTask() = default;
 
-    void run()
-    {
-        task();
-    }
+  void run() { task(); }
 
-private:
-    fSubfileTask task;
+ private:
+  fSubfileTask task;
 };

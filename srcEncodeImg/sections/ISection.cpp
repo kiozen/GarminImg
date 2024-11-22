@@ -16,36 +16,30 @@
 
 **********************************************************************************************/
 
-#include "CException.h"
 #include "sections/ISection.h"
 
-ISection::ISection()
-{
+#include "CException.h"
+
+ISection::ISection() {}
+
+quint32 ISection::offset() const {
+  if (offset_ & 0xFFFFFFFF00000000LL) {
+    throw CException("Offset of section exceeds 32 bit");
+  }
+
+  return offset_;
 }
 
-quint32 ISection::offset() const
-{
-    if(offset_ & 0xFFFFFFFF00000000LL)
-    {
-        throw CException("Offset of section exceeds 32 bit");
-    }
+quint32 ISection::size() const {
+  if (size_ & 0xFFFFFFFF00000000LL) {
+    throw CException("Size of section exceeds 32 bit");
+  }
 
-    return offset_;
+  return size_;
 }
 
-quint32 ISection::size() const
-{
-    if(size_ & 0xFFFFFFFF00000000LL)
-    {
-        throw CException("Size of section exceeds 32 bit");
-    }
-
-    return size_;
-}
-
-void ISection::write(QFile& file)
-{
-    offset_ = file.pos();
-    file.write(data_);
-    size_ = file.pos() - offset_;
+void ISection::write(QFile& file) {
+  offset_ = file.pos();
+  file.write(data_);
+  size_ = file.pos() - offset_;
 }
