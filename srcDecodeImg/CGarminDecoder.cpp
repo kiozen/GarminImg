@@ -40,7 +40,7 @@ static void minno(hdr_tre_t* trehdr, QByteArray& data) {
     quint32 nlevels = trehdr->tre1_size / sizeof(tre_1_t);
 
     quint8 key[5];
-    quint8 tbl[trehdr->tre1_size];
+    quint8* tbl = new quint8[trehdr->tre1_size];
     memcpy(tbl, data.data(), trehdr->tre1_size);
 
     key[0] = (((tbl[0] >> 4) + 8) & 0x0F);
@@ -64,6 +64,8 @@ static void minno(hdr_tre_t* trehdr, QByteArray& data) {
 
     memcpy(data.data(), tbl, trehdr->tre1_size);
     trehdr->flag &= ~0x80;
+
+    delete[] tbl;
   }
 }
 
