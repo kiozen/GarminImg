@@ -44,7 +44,8 @@ mapunit_t CSubdiv::roundLatToLocalShifted(mapunit_t absval) const {
   val += ((1 << shift_) / 2);
 
   mapunit_t deltaLat = val >> shift_;
-  Q_ASSERT_X(deltaLat >= -0x8000 && deltaLat <= 0x7fff, "roundLatToLocalShifted", "deltaLat = " + deltaLat);
+  Q_ASSERT_X(deltaLat >= -0x8000 && deltaLat <= 0x7fff, "roundLatToLocalShifted",
+             QString("deltaLat = %1").arg(deltaLat, 8, 16).toLocal8Bit());
   return deltaLat;
 }
 
@@ -53,7 +54,8 @@ mapunit_t CSubdiv::roundLonToLocalShifted(mapunit_t absval) const {
   val += ((1 << shift_) / 2);
 
   mapunit_t deltaLon = val >> shift_;
-  Q_ASSERT_X(deltaLon >= -0x8000 && deltaLon <= 0x7fff, "roundLonToLocalShifted", "deltaLon = " + deltaLon);
+  Q_ASSERT_X(deltaLon >= -0x8000 && deltaLon <= 0x7fff, "roundLonToLocalShifted",
+             QString("deltaLon = %1").arg(deltaLon).toLocal8Bit());
   return deltaLon;
 }
 

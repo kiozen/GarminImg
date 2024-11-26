@@ -24,12 +24,11 @@
 using mapunit_t = qint32;
 
 inline mapunit_t degToMapUnit(qreal deg) {
-  constexpr qreal DELTA = 360.0 / (1 << 24) / 2;
-  if (deg > 0) {
-    return (int)((deg + DELTA) * (1 << 24) / 360);
-  } else {
-    return (int)((deg - DELTA) * (1 << 24) / 360);
-  }
+  constexpr qreal DELTA = 360.0 / (1 << 24) / 2 + 360.0;
+  constexpr qreal RESCALE = (1 << 24) / 360.0;
+  constexpr int UNDO360 = 1 << 24;
+
+  return (int)((deg + DELTA) * RESCALE) - UNDO360;
 }
 
 class CCoord {

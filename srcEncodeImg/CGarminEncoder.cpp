@@ -40,7 +40,7 @@ bool is_equal(const qreal lhs, const qreal rhs) { return fabs(lhs - rhs) <= std:
 CGarminEncoder::CGarminEncoder(const QString& filename)
     : filename(QDir::current().absoluteFilePath(filename)),
       basename(QFileInfo(filename).baseName()),
-      tmpdir(allArgs.value("tmpdir") + basename + "_") {
+      tmpdir(allArgs.value("tmpdir") + "/" + basename + "_") {
   if (!tmpdir.isValid()) {
     throw CException("Could not create temp. working directory: " + tmpdir.path());
   }
@@ -113,6 +113,13 @@ void CGarminEncoder::splitIntoTiles() {
   QPointF _ref3 = ref3;
   QPointF _ref4 = ref4;
 
+  if (proj.isSrcLatLong()) {
+    _ref1 *= DEG_TO_RAD;
+    _ref2 *= DEG_TO_RAD;
+    _ref3 *= DEG_TO_RAD;
+    _ref4 *= DEG_TO_RAD;
+  }
+
   proj.transform(_ref1, PJ_FWD);
   proj.transform(_ref2, PJ_FWD);
   proj.transform(_ref3, PJ_FWD);
@@ -131,8 +138,8 @@ void CGarminEncoder::splitIntoTiles() {
   quint32 xoff = 0;
   quint32 yoff = 0;
 
-  QString subFileBaseName = QString::number(qFloor(_ref1.x() * RAD_TO_DEG)).rightJustified(2, '0') +
-                            QString::number(qFloor(_ref1.y() * RAD_TO_DEG)).rightJustified(2, '0');
+  QString subFileBaseName = QString::number(qAbs(qFloor(_ref1.x() * RAD_TO_DEG))).rightJustified(2, '0') +
+                            QString::number(qAbs(qFloor(_ref1.y() * RAD_TO_DEG))).rightJustified(2, '0');
 
   const int N = qCeil(qreal(xsize_px) / XSIZE_SUPER_TILE);
   const int M = qCeil(qreal(ysize_px) / YSIZE_SUPER_TILE);
@@ -255,6 +262,11 @@ void CGarminEncoder::exportSubfileTile(quint32 xoff, quint32 yoff, quint32 xsize
     QPointF ref1 = trFwd.map(QPointF(xoff, yoff));
     QPointF ref2 = trFwd.map(QPointF(xoff + xsize, yoff + ysize));
 
+    if (proj.isSrcLatLong()) {
+      ref1 *= DEG_TO_RAD;
+      ref2 *= DEG_TO_RAD;
+    }
+
     proj.transform(ref1, PJ_FWD);
     proj.transform(ref2, PJ_FWD);
 
@@ -285,6 +297,8 @@ void CGarminEncoder::exportSubfileTile(quint32 xoff, quint32 yoff, quint32 xsize
       for (int n = 0; n < N; n++) {
         quint32 xsizeTile = qMin(XSIZE_TILE, xsize - xoffTile) & 0xFFFFFFFC;
         quint32 ysizeTile = qMin(YSIZE_TILE, ysize - yoffTile);
+        quint32 x = xoff + xoffTile;
+        quint32 y = yoff + yoffTile;
 
         if (rasterBandCount == 1) {
           GDALRasterBand* pBand;
@@ -293,32 +307,52 @@ void CGarminEncoder::exportSubfileTile(quint32 xoff, quint32 yoff, quint32 xsize
           QImage img(QSize(xsizeTile, ysizeTile), QImage::Format_Indexed8);
           img.setColorTable(colortable);
 
-          CPLErr err = pBand->RasterIO(GF_Read, xoff + xoffTile, yoff + yoffTile, xsizeTile, ysizeTile, img.bits(),
-                                       xsizeTile, ysizeTile, GDT_Byte, 0, 0);
+          CPLErr err =
+              pBand->RasterIO(GF_Read, x, y, xsizeTile, ysizeTile, img.bits(), xsizeTile, ysizeTile, GDT_Byte, 0, 0);
           if (err != CE_None) {
             throw CException("Failed to export tile from " + subfileName);
           }
 
           img = img.convertToFormat(QImage::Format_ARGB32);
+          saveTile(img, trFwd, x, y, xsizeTile, ysizeTile, dir, proj, ++tileCount, gmpFile, subdivNumbers);
 
-          if (!isSingleColor(img)) {
-            const QString& tilepath =
-                dir.absoluteFilePath(QString("%1_%2_%3.jpg").arg(++tileCount).arg(ref1.y()).arg(ref1.x()));
-            img.save(tilepath);
-
-            QPointF ref1 = trFwd.map(QPointF(xoff + xoffTile, yoff + yoffTile));
-            QPointF ref2 = trFwd.map(QPointF(xoff + xoffTile + xsizeTile, yoff + yoffTile + ysizeTile));
-
-            proj.transform(ref1, PJ_FWD);
-            proj.transform(ref2, PJ_FWD);
-
-            gmpFile.addTile(tilepath, ref1.y() * RAD_TO_DEG, ref2.x() * RAD_TO_DEG, ref2.y() * RAD_TO_DEG,
-                            ref1.x() * RAD_TO_DEG, subdivNumbers);
-
-            QFile::remove(tilepath);
-          }
         } else {
-          throw CException("Not implemented yet!");
+          QImage img(QSize(xsizeTile, ysizeTile), QImage::Format_ARGB32);
+          img.fill(qRgba(255, 255, 255, 255));
+
+          QVector<quint8> buffer(xsizeTile * ysizeTile);
+
+          QRgb testPix = qRgba(GCI_RedBand, GCI_GreenBand, GCI_BlueBand, GCI_AlphaBand);
+
+          for (int b = 1; b <= rasterBandCount; ++b) {
+            GDALRasterBand* pBand;
+            pBand = dataset->GetRasterBand(b);
+
+            int err = pBand->RasterIO(GF_Read, x, y, xsizeTile, ysizeTile, buffer.data(), xsizeTile, ysizeTile,
+                                      GDT_Byte, 0, 0);
+
+            if (!err) {
+              int pbandColour = pBand->GetColorInterpretation();
+              unsigned int offset;
+
+              for (offset = 0; offset < sizeof(testPix) && *(((quint8*)&testPix) + offset) != pbandColour; offset++) {
+              }
+              if (offset < sizeof(testPix)) {
+                quint8* pTar = img.bits() + offset;
+                quint8* pSrc = buffer.data();
+                const int size = buffer.size();
+
+                for (int i = 0; i < size; ++i) {
+                  *pTar = *pSrc;
+                  pTar += sizeof(testPix);
+                  pSrc += 1;
+                }
+              }
+            } else {
+              throw CException("Failed to export tile from " + subfileName);
+            }
+          }
+          saveTile(img, trFwd, x, y, xsizeTile, ysizeTile, dir, proj, ++tileCount, gmpFile, subdivNumbers);
         }
         xoffTile += XSIZE_TILE;
         // goto done2;
@@ -340,6 +374,31 @@ void CGarminEncoder::exportSubfileTile(quint32 xoff, quint32 yoff, quint32 xsize
 
   if (dataset) {
     GDALClose(dataset);
+  }
+}
+
+void CGarminEncoder::saveTile(const QImage& img, const QTransform& trFwd, quint32 x, quint32 y, quint32 xsizeTile,
+                              quint32 ysizeTile, const QDir& path, const CProj& proj, quint32 tileCount,
+                              CFileGmp& gmpFile, const QList<CSubdiv::number_t>& subdivNumbers) {
+  if (!isSingleColor(img)) {
+    const QString& tilepath = path.absoluteFilePath(QString("%1_%2_%3.jpg").arg(tileCount).arg(ref1.y()).arg(ref1.x()));
+    img.save(tilepath);
+
+    QPointF ref1 = trFwd.map(QPointF(x, y));
+    QPointF ref2 = trFwd.map(QPointF(x + xsizeTile, y + ysizeTile));
+
+    if (proj.isSrcLatLong()) {
+      ref1 *= DEG_TO_RAD;
+      ref2 *= DEG_TO_RAD;
+    }
+
+    proj.transform(ref1, PJ_FWD);
+    proj.transform(ref2, PJ_FWD);
+
+    gmpFile.addTile(tilepath, ref1.y() * RAD_TO_DEG, ref2.x() * RAD_TO_DEG, ref2.y() * RAD_TO_DEG,
+                    ref1.x() * RAD_TO_DEG, subdivNumbers);
+
+    QFile::remove(tilepath);
   }
 }
 

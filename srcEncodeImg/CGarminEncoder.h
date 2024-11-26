@@ -25,6 +25,10 @@
 #include <QTemporaryDir>
 #include <QTransform>
 
+#include "types/CSubdiv.h"
+
+class CFileGmp;
+
 class GDALDriverManager;
 class GDALDriver;
 
@@ -41,6 +45,9 @@ class CGarminEncoder {
   void exportSubfileTile(quint32 xoff, quint32 yoff, quint32 xsize, quint32 ysize, const QString& filename,
                          const QString& subfileName);
   bool isSingleColor(const QImage& img);
+  void saveTile(const QImage& img, const QTransform& trFwd, quint32 x, quint32 y, quint32 xsizeTile, quint32 ysizeTile,
+                const QDir& path, const CProj& proj, quint32 tileCount, CFileGmp& gmpFile,
+                const QList<CSubdiv::number_t>& subdivNumbers);
   QMutex mutex;
 
   QString filename;
